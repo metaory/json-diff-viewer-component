@@ -1,0 +1,492 @@
+{
+  "taxRate": "0.1",
+  "metadata": {
+    "version": "2.1.0",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-21T09:15:44Z",
+    "environment": "production",
+    "region": "us-east-1",
+    "tags": ["order", "processed", "verified", "archived"],
+    "history": [
+      {
+        "timestamp": "2024-01-15T10:30:00Z",
+        "action": "created",
+        "userId": 1234,
+        "details": {
+          "source": "api",
+          "ip": "192.168.1.100"
+        }
+      },
+      {
+        "timestamp": "2024-01-16T09:15:22Z",
+        "action": "updated",
+        "userId": 1234,
+        "details": {
+          "changes": ["items.added", "taxRate.modified"],
+          "ip": "192.168.1.100"
+        }
+      },
+      {
+        "timestamp": "2024-01-20T14:22:33Z",
+        "action": "verified",
+        "userId": 5678,
+        "details": {
+          "verifiedBy": "system",
+          "ip": "10.0.0.5"
+        }
+      },
+      {
+        "timestamp": "2024-01-21T09:15:44Z",
+        "action": "archived",
+        "userId": 5678,
+        "details": {
+          "reason": "order_completed",
+          "ip": "10.0.0.5"
+        }
+      }
+    ]
+  },
+  "partners": [
+    {
+      "items": [
+        {
+          "item": {
+            "id": 723,
+            "name": "John West Tuna Tempter Chunky Springwater (95g)",
+            "image": "https://static.hampr.com.au/prod/images/partners/hampr-kitchen-supplies/pantryItems/johnwest_d9924ca8460be1d0b90e37ee67e1e5e3892d14e503464680a53319c771864ed6.png",
+            "isHot": false,
+            "price": 3.38,
+            "extRef": null,
+            "hasTax": true,
+            "isCold": false,
+            "serves": null,
+            "measure": "g",
+            "dietTags": [],
+            "serveTags": [],
+            "supplyCost": 2.7,
+            "description": "",
+            "measureCount": "95",
+            "innerQuantity": null,
+            "itemPriceMode": "MARKUP",
+            "quantityLabel": "Can(s)",
+            "priceIncludesTax": true,
+            "servingSizeLabel": null,
+            "innerQuantityLabel": null,
+            "pantryCategoryName": "Groceries",
+            "supplierDescription": null,
+            "attributes": {
+              "nutrition": {
+                "calories": 95,
+                "protein": 20.5,
+                "carbs": 0.5,
+                "fat": 0.8,
+                "fiber": 0,
+                "sodium": 320,
+                "vitamins": {
+                  "vitaminD": 0,
+                  "vitaminB12": 2.5,
+                  "iron": 1.2
+                }
+              },
+              "allergens": [],
+              "certifications": ["halal", "dolphin-safe"],
+              "storage": {
+                "temperature": "room",
+                "humidity": "low",
+                "shelfLife": {
+                  "days": 1095,
+                  "conditions": "unopened"
+                }
+              }
+            },
+            "reviews": [
+              {
+                "id": 1001,
+                "rating": 4.5,
+                "comment": "Great quality tuna",
+                "author": "customer_123",
+                "date": "2024-01-10T08:00:00Z",
+                "verified": true
+              },
+              {
+                "id": 1002,
+                "rating": 5.0,
+                "comment": "Perfect for salads",
+                "author": "customer_456",
+                "date": "2024-01-12T14:30:00Z",
+                "verified": true
+              },
+              {
+                "id": 1003,
+                "rating": 4.0,
+                "comment": "Good value for money",
+                "author": "customer_789",
+                "date": "2024-01-18T12:00:00Z",
+                "verified": true
+              }
+            ]
+          },
+          "configs": [
+            {
+              "config": [],
+              "location": null,
+              "quantity": 4,
+              "collectionCommWithTax": 0,
+              "collectionCostWithTax": 10.8,
+              "collectionPriceWithTax": 13.52,
+              "collectionCommWithoutTax": 0,
+              "collectionCostWithoutTax": 9.82,
+              "collectionPriceWithoutTax": 12.29,
+              "pricing": {
+                "basePrice": 3.38,
+                "discounts": [],
+                "promotions": [
+                  {
+                    "id": "promo_2024_q1",
+                    "type": "bulk",
+                    "discount": 0.1,
+                    "minQuantity": 4
+                  }
+                ],
+                "finalPrice": 3.38
+              }
+            }
+          ]
+        },
+        {
+          "item": {
+            "id": 770,
+            "name": "Remedy Lemon Ginger Kombucha (250ml x 4 Pack)",
+            "image": "https://static.hampr.com.au/prod/images/partners/hampr-kitchen-supplies/pantryItems/807892_a0289cb761c23c33f6e1dc8e965e1e4fdf4d1eac73dae0e423029ac1c9cb753c.avif",
+            "isHot": false,
+            "price": 11.88,
+            "extRef": null,
+            "hasTax": true,
+            "isCold": false,
+            "serves": "4",
+            "measure": "ml",
+            "dietTags": [],
+            "serveTags": [],
+            "supplyCost": 9.5,
+            "description": "",
+            "measureCount": "250",
+            "innerQuantity": "4",
+            "itemPriceMode": "MARKUP",
+            "quantityLabel": "Carton",
+            "priceIncludesTax": true,
+            "servingSizeLabel": null,
+            "innerQuantityLabel": "Cans",
+            "pantryCategoryName": "Beverages",
+            "supplierDescription": null,
+            "attributes": {
+              "nutrition": {
+                "calories": 35,
+                "protein": 0,
+                "carbs": 8,
+                "fat": 0,
+                "fiber": 0,
+                "sodium": 5,
+                "vitamins": {
+                  "vitaminC": 10,
+                  "vitaminB6": 2
+                }
+              },
+              "allergens": [],
+              "certifications": ["organic", "vegan", "gluten-free"],
+              "storage": {
+                "temperature": "refrigerated",
+                "humidity": "moderate",
+                "shelfLife": {
+                  "days": 90,
+                  "conditions": "unopened, refrigerated"
+                }
+              }
+            },
+            "reviews": [
+              {
+                "id": 2001,
+                "rating": 4.8,
+                "comment": "Refreshing and healthy",
+                "author": "customer_789",
+                "date": "2024-01-08T11:20:00Z",
+                "verified": true
+              }
+            ]
+          },
+          "configs": [
+            {
+              "config": [],
+              "location": null,
+              "quantity": 5,
+              "collectionCommWithTax": 0,
+              "collectionCostWithTax": 47.5,
+              "collectionPriceWithTax": 59.400000000000006,
+              "collectionCommWithoutTax": 0,
+              "collectionCostWithoutTax": 43.18,
+              "collectionPriceWithoutTax": 54,
+              "pricing": {
+                "basePrice": 11.88,
+                "discounts": [],
+                "promotions": [],
+                "finalPrice": 11.88
+              }
+            }
+          ]
+        },
+        {
+          "item": {
+            "id": 1290,
+            "name": "Red Bull Energy Drink Sugar Free 4x250ml",
+            "image": "https://static.hampr.com.au/images/partners/shortys-liquor/items/3810_560x560.jpg",
+            "isHot": false,
+            "price": 15,
+            "extRef": null,
+            "hasTax": true,
+            "isCold": false,
+            "serves": "4",
+            "measure": "ml",
+            "dietTags": [],
+            "serveTags": [],
+            "supplyCost": 12,
+            "description": "<p></p>\n",
+            "measureCount": "250",
+            "innerQuantity": "4",
+            "itemPriceMode": "MARKUP",
+            "quantityLabel": "Pack",
+            "priceIncludesTax": false,
+            "servingSizeLabel": null,
+            "innerQuantityLabel": "Cans",
+            "pantryCategoryName": "Beverages",
+            "supplierDescription": "",
+            "attributes": {
+              "nutrition": {
+                "calories": 10,
+                "protein": 0,
+                "carbs": 3,
+                "fat": 0,
+                "fiber": 0,
+                "sodium": 105,
+                "caffeine": 80,
+                "vitamins": {
+                  "vitaminB3": 8,
+                  "vitaminB5": 2,
+                  "vitaminB6": 2,
+                  "vitaminB12": 2
+                }
+              },
+              "allergens": [],
+              "certifications": [],
+              "storage": {
+                "temperature": "room",
+                "humidity": "low",
+                "shelfLife": {
+                  "days": 730,
+                  "conditions": "unopened"
+                }
+              }
+            },
+            "reviews": []
+          },
+          "configs": [
+            {
+              "config": [],
+              "location": null,
+              "quantity": 2,
+              "collectionCommWithTax": 0,
+              "collectionCostWithTax": 26.4,
+              "collectionPriceWithTax": 33,
+              "collectionCommWithoutTax": 0,
+              "collectionCostWithoutTax": 24,
+              "collectionPriceWithoutTax": 30,
+              "pricing": {
+                "basePrice": 15,
+                "discounts": [],
+                "promotions": [],
+                "finalPrice": 15
+              }
+            }
+          ]
+        },
+        {
+          "item": {
+            "id": 1430,
+            "name": "Musashi Shred & Burn Protein Shake Chocolate (375ml)",
+            "image": "https://static.hampr.com.au/prod/images/partners/hampr-kitchen-supplies/pantryItems/317YFK53yPL._AC_SY580__c524a68280c565915a85dd56d1c02ca2f201b7abcc1eb79ac76588cc6dd82d2b.jpg",
+            "isHot": false,
+            "price": 6.88,
+            "extRef": null,
+            "hasTax": true,
+            "isCold": false,
+            "serves": "1",
+            "measure": "ml",
+            "dietTags": [],
+            "serveTags": [],
+            "supplyCost": 5.5,
+            "description": "<p></p>\n",
+            "measureCount": "375",
+            "innerQuantity": null,
+            "itemPriceMode": "MARKUP",
+            "quantityLabel": "Bottle(s)",
+            "priceIncludesTax": true,
+            "servingSizeLabel": null,
+            "innerQuantityLabel": null,
+            "pantryCategoryName": "Beverages",
+            "supplierDescription": "",
+            "attributes": {
+              "nutrition": {
+                "calories": 180,
+                "protein": 30,
+                "carbs": 8,
+                "fat": 3.5,
+                "fiber": 2,
+                "sodium": 180,
+                "vitamins": {
+                  "vitaminD": 2.5,
+                  "calcium": 30,
+                  "iron": 15
+                }
+              },
+              "allergens": ["milk", "soy"],
+              "certifications": [],
+              "storage": {
+                "temperature": "room",
+                "humidity": "low",
+                "shelfLife": {
+                  "days": 365,
+                  "conditions": "unopened"
+                }
+              }
+            },
+            "reviews": [
+              {
+                "id": 3001,
+                "rating": 4.2,
+                "comment": "Good protein content",
+                "author": "customer_321",
+                "date": "2024-01-05T16:45:00Z",
+                "verified": true
+              },
+              {
+                "id": 3002,
+                "rating": 3.8,
+                "comment": "Taste could be better",
+                "author": "customer_654",
+                "date": "2024-01-07T09:10:00Z",
+                "verified": false
+              }
+            ]
+          },
+          "configs": [
+            {
+              "config": [],
+              "location": null,
+              "quantity": 5,
+              "collectionCommWithTax": 0,
+              "collectionCostWithTax": 27.5,
+              "collectionPriceWithTax": 34.4,
+              "collectionCommWithoutTax": 0,
+              "collectionCostWithoutTax": 25,
+              "collectionPriceWithoutTax": 31.27,
+              "pricing": {
+                "basePrice": 6.88,
+                "discounts": [],
+                "promotions": [],
+                "finalPrice": 6.88
+              }
+            }
+          ]
+        }
+      ],
+      "partner": {
+        "id": 298,
+        "name": "Woolworths",
+        "slug": "hampr-kitchen-supplies",
+        "commissionRate": 0,
+        "contact": {
+          "email": "orders@woolworths.com.au",
+          "phone": "+61-2-8888-8888",
+          "address": {
+            "street": "1 Woolworths Way",
+            "city": "Bella Vista",
+            "state": "NSW",
+            "postcode": "2153",
+            "country": "Australia"
+          }
+        },
+        "settings": {
+          "autoApprove": true,
+          "notificationEnabled": true,
+          "deliveryOptions": ["standard", "express", "overnight"]
+        }
+      },
+      "taxRate": "0.1",
+      "countryId": 1,
+      "commTaxTotal": 0,
+      "costTaxTotal": 11.56,
+      "commTotalWithTax": 0,
+      "costTotalWithTax": 127.2,
+      "costOfTaxFreeItems": 0,
+      "deliveryFeeWithTax": 15,
+      "commTotalWithoutTax": 0,
+      "costTotalWithoutTax": 115.64,
+      "priceOfTaxFreeItems": 0,
+      "smallOrderFeeWithTax": 0,
+      "costOfAllItemsWithTax": 112.2,
+      "deliveryFeeWithoutTax": 13.64,
+      "deliveryFeeCommWithTax": 0,
+      "priceOfAllItemsWithTax": 140.32,
+      "smallOrderFeeWithoutTax": 0,
+      "costOfAllItemsWithoutTax": 102,
+      "smallOrderFeeCommWithTax": 0,
+      "costOfTaxableItemsWithTax": 112.2,
+      "deliveryFeeCommWithoutTax": 0,
+      "priceOfAllItemsWithoutTax": 127.56,
+      "priceOfTaxableItemsWithTax": 140.32,
+      "smallOrderFeeCommWithoutTax": 0,
+      "costOfTaxableItemsWithoutTax": 102,
+      "priceOfTaxableItemsWithoutTax": 127.56
+    }
+  ],
+  "countryId": 1,
+  "costOfTaxFreeItems": 0,
+  "deliveryFeeWithTax": 15,
+  "priceOfTaxFreeItems": 0,
+  "smallOrderFeeWithTax": 0,
+  "deliveryFeeWithoutTax": 13.64,
+  "smallOrderFeeWithoutTax": 0,
+  "costOfTaxableItemsWithTax": 112.2,
+  "priceOfTaxableItemsWithTax": 140.32,
+  "costOfTaxableItemsWithoutTax": 102,
+  "priceOfTaxableItemsWithoutTax": 127.56,
+  "analytics": {
+    "views": 1250,
+    "conversions": 45,
+    "averageOrderValue": 127.56,
+    "topItems": [
+      {
+        "itemId": 770,
+        "sales": 125,
+        "revenue": 1485.00
+      },
+      {
+        "itemId": 1290,
+        "sales": 89,
+        "revenue": 1335.00
+      }
+    ],
+    "geographic": {
+      "regions": [
+        {
+          "name": "NSW",
+          "orders": 320,
+          "revenue": 40819.20
+        },
+        {
+          "name": "VIC",
+          "orders": 245,
+          "revenue": 31253.20
+        }
+      ]
+    }
+  }
+}
