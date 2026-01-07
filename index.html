@@ -3,11 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/logo.svg">
   <title>JSON Diff Viewer</title>
 </head>
 <body>
   <div id="app">
-    <h1>JSON Diff Viewer<a href="https://github.com/metaory/json-diff-viewer-component" target="_blank" rel="noopener noreferrer"><img src="/github.svg" alt="GitHub" class="github-logo"></a></h1>
+    <h1>JSON Diff Viewer
+      <div class="header-controls">
+        <button id="theme-toggle">Dark</button>
+        <a href="https://github.com/metaory/json-diff-viewer-component" target="_blank" rel="noopener noreferrer"><img src="/github.svg" alt="GitHub" class="github-logo"></a>
+      </div>
+    </h1>
     <json-diff-viewer></json-diff-viewer>
   </div>
   <script type="module" src="/src/main.js"></script>

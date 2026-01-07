@@ -1,8 +1,21 @@
-# json-diff-viewer
-
-**Compare JSON side-by-side, visually**
-
-A zero-dependency web component for visualizing JSON differences with synchronized scrolling, collapsible nodes, and syntax highlighting. Perfect for debugging, API comparisons, and configuration diffs
+<div align="center">
+    <img src="public/logo.svg" alt="logo" height="128" />
+    <h2>json-diff-viewer</h2>
+    <h5>
+        Compare JSON side-by-side, visually
+    </h5>
+    <p>
+        A zero-dependency web component for visualizing JSON differences
+        <br>
+        with synchronized scrolling, collapsible nodes, and syntax highlighting
+        <br>
+        Perfect for debugging, API comparisons, and configuration diffs
+    </p>
+    <img src="public/screenshot.png" alt="demo" width="80%" />
+    <h5>
+        <a href="https://metaory.github.io/json-diff-viewer-component/" target="_blank">metaory.github.io/json-diff-viewer-component</a>
+    </h5>
+</div>
 
 ## Features
 
@@ -101,7 +114,7 @@ watch(
       viewerRef.value.setData(props.left, props.right);
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 ```
@@ -119,52 +132,52 @@ watch(
 
 ## Styling
 
-Override CSS custom properties:
+Customize the component by overriding CSS custom properties (design tokens) on the `json-diff-viewer` element. All tokens are defined on `:host` and can be overridden from outside the shadow DOM.
+
+### Design Tokens
 
 ```css
 json-diff-viewer {
   /* Diff colors */
-  --added: #22c55e;
-  --removed: #ef4444;
-  --modified: #eab308;
-  --type-changed: #f97316;
-  --unchanged: #71717a;
+  --add: #22c55e; /* Added items */
+  --rem: #ef4444; /* Removed items */
+  --mod: #eab308; /* Modified items */
+  --typ: #f97316; /* Type changed items */
 
-  /* Background */
-  --bg: #18181b;
-  --bg-panel: #27272a;
-  --border: #3f3f46;
+  /* Backgrounds */
+  --bg: #18181b; /* Main background */
+  --bg2: #27272a; /* Panel background */
+
+  /* Borders */
+  --bdr: #3f3f46; /* Border color */
 
   /* Text */
-  --text: #fafafa;
-  --text-dim: #a1a1aa;
+  --txt: #fafafa; /* Primary text */
+  --dim: #a1a1aa; /* Dimmed/secondary text */
 
-  /* Syntax */
-  --key: #38bdf8;
-  --string: #a78bfa;
-  --number: #34d399;
-  --boolean: #fb923c;
-  --null: #f472b6;
-  --bracket: #71717a;
-
-  /* Layout */
-  --radius: 12px;
-  --font: "JetBrains Mono", monospace;
+  /* Syntax highlighting */
+  --key: #38bdf8; /* Object keys */
+  --str: #a78bfa; /* String values */
+  --num: #34d399; /* Number values */
+  --bool: #fb923c; /* Boolean values */
+  --nul: #f472b6; /* Null values */
+  --br: #71717a; /* Brackets and braces */
 }
 ```
 
-### Light Theme
+Create your own theme by overriding these tokens. For example, a light theme:
 
 ```css
 json-diff-viewer {
   --bg: #fafafa;
-  --bg-panel: #ffffff;
-  --border: #e4e4e7;
-  --text: #18181b;
-  --text-dim: #71717a;
+  --bg2: #ffffff;
+  --bdr: #e4e4e7;
+  --txt: #18181b;
+  --dim: #71717a;
   --key: #0284c7;
-  --string: #7c3aed;
-  --number: #059669;
+  --str: #7c3aed;
+  --num: #059669;
+  /* ... override other tokens as needed */
 }
 ```
 

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Left JSON brace -->
+  <path d="M 28 32 Q 28 20 40 20 L 40 44 Q 28 44 28 56 L 28 72 Q 28 84 40 84 L 40 108 Q 28 108 28 96" 
+        stroke="#38bdf8" 
+        stroke-width="6" 
+        fill="none" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+  
+  <!-- Right JSON brace -->
+  <path d="M 100 32 Q 100 20 88 20 L 88 44 Q 100 44 100 56 L 100 72 Q 100 84 88 84 L 88 108 Q 100 108 100 96" 
+        stroke="#a78bfa" 
+        stroke-width="6" 
+        fill="none" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+  
+  <!-- Diff connector -->
+  <path d="M 52 64 Q 64 58 64 64 Q 64 70 76 64" 
+        stroke="#22c55e" 
+        stroke-width="4" 
+        fill="none" 
+        stroke-linecap="round"/>
+  
+  <!-- Diff indicators -->
+  <circle cx="48" cy="64" r="4" fill="#ef4444"/>
+  <circle cx="80" cy="64" r="4" fill="#22c55e"/>
+</svg>
