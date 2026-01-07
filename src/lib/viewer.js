@@ -1,184 +1,109 @@
-import { diff, TYPES } from './diff.js'
+import { diff, TYPE } from './diff.js'
 import styles from './styles.js'
 
-const formatValue = val => {
-  if (val === null) return ['null', 'null']
-  if (val === undefined) return ['undefined', 'null']
-  const type = typeof val
-  if (type === 'string') return [val, 'string']
-  if (type === 'number') return [String(val), 'number']
-  if (type === 'boolean') return [String(val), 'boolean']
-  return [JSON.stringify(val), 'string']
-}
+const STAT_TYPES = ['added', 'removed', 'modified', 'type_changed']
+
+const format = val => ({
+  null: ['null', 'null'],
+  undefined: ['undefined', 'null'],
+  string: [val, 'string'],
+  number: [String(val), 'number'],
+  boolean: [String(val), 'boolean']
+})[val === null ? 'null' : typeof val] || [JSON.stringify(val), 'string']
 
 class JsonDiffViewer extends HTMLElement {
   #left = null
   #right = null
-  #diffTree = null
-  #expanded = new Proxy({}, {
-    set: (t, k, v) => { t[k] = v; this.#render(); return true }
-  })
-  #stats = { added: 0, removed: 0, modified: 0, type_changed: 0 }
+  #tree = null
+  #exp = {}
+  #proxy = new Proxy(this.#exp, { set: (t, k, v) => (t[k] = v, this.#render(), true) })
+  #stats = {}
 
-  static get observedAttributes() { return ['left', 'right'] }
-
-  constructor() {
-    super()
-    this.attachShadow({ mode: 'open' })
-  }
-
+  static observedAttributes = ['left', 'right']
+  constructor() { super(); this.attachShadow({ mode: 'open' }) }
   connectedCallback() { this.#render() }
-
-  attributeChangedCallback(name, _, val) {
-    if (name === 'left') this.#left = JSON.parse(val)
-    if (name === 'right') this.#right = JSON.parse(val)
-    this.#compute()
-  }
-
+  attributeChangedCallback(n, _, v) { n === 'left' ? this.#left = JSON.parse(v) : this.#right = JSON.parse(v); this.#compute() }
   set left(v) { this.#left = v; this.#compute() }
   set right(v) { this.#right = v; this.#compute() }
   get left() { return this.#left }
   get right() { return this.#right }
-
-  setData(left, right) {
-    this.#left = left
-    this.#right = right
-    this.#compute()
-  }
+  setData(l, r) { this.#left = l; this.#right = r; this.#compute() }
 
   #compute() {
     if (!this.#left || !this.#right) return
-    this.#diffTree = diff(this.#left, this.#right)
-    this.#stats = { added: 0, removed: 0, modified: 0, type_changed: 0 }
-    this.#countStats(this.#diffTree)
+    this.#tree = diff(this.#left, this.#right)
+    this.#stats = Object.fromEntries(STAT_TYPES.map(t => [t, 0]))
+    this.#walk(this.#tree, n => n.type !== TYPE.UNCHANGED && this.#stats[n.type]++)
+    for (const k in this.#exp) delete this.#exp[k]
+    this.#walk(this.#tree, (n, p) => (n.isArray || n.isObject) && !n.hasDiff && (this.#exp[p] = false))
     this.#render()
   }
 
-  #countStats(node) {
-    if (node.type !== TYPES.UNCHANGED && this.#stats[node.type] !== undefined) this.#stats[node.type]++
-    node.children?.forEach(c => this.#countStats(c))
+  #walk(node, fn, path = '') {
+    const p = path ? `${path}.${node.key}` : String(node.key)
+    fn(node, p)
+    for (const c of node.children || []) this.#walk(c, fn, p)
+  }
+
+  #collapseAll() {
+    if (!this.#tree) return
+    this.#walk(this.#tree, (n, p) => (n.isArray || n.isObject) && (this.#exp[p] = false))
+    this.#render()
+  }
+
+  #expandAll() {
+    for (const k in this.#exp) delete this.#exp[k]
+    this.#render()
   }
 
   #render() {
-    if (!this.#diffTree) {
-      this.shadowRoot.innerHTML = `<style>${styles}</style><div style="padding:2rem;color:var(--text-dim)">Provide left and right JSON to compare</div>`
-      return
-    }
-
-    const statsHtml = `
-      <div class="stats">
-        <div class="stat stat-added"><span class="stat-dot"></span>${this.#stats.added} added</div>
-        <div class="stat stat-removed"><span class="stat-dot"></span>${this.#stats.removed} removed</div>
-        <div class="stat stat-modified"><span class="stat-dot"></span>${this.#stats.modified} modified</div>
-        <div class="stat stat-type_changed"><span class="stat-dot"></span>${this.#stats.type_changed} type changed</div>
-      </div>
-    `
-
+    if (!this.#tree) return (this.shadowRoot.innerHTML = `<style>${styles}</style><div class="empty">Provide left and right JSON</div>`)
     this.shadowRoot.innerHTML = `
       <style>${styles}</style>
-      ${statsHtml}
+      <div class="stats">
+        ${STAT_TYPES.map(t => `<div class="stat stat-${t}"><span class="dot"></span>${this.#stats[t]} ${t.replace('_', ' ')}</div>`).join('')}
+        <div class="stats-buttons">
+          <button class="btn-collapse" data-action="collapse">Collapse All</button>
+          <button class="btn-expand" data-action="expand">Expand All</button>
+        </div>
+      </div>
       <div class="container">
-        <div class="panel" data-side="left">
-          <div class="panel-header">Left (Original)</div>
-          ${this.#renderTree(this.#diffTree, 'left', '')}
-        </div>
-        <div class="panel" data-side="right">
-          <div class="panel-header">Right (Modified)</div>
-          ${this.#renderTree(this.#diffTree, 'right', '')}
-        </div>
-      </div>
-    `
-
-    this.#bindEvents()
+        ${['left', 'right'].map(s => `<div class="panel" data-side="${s}"><div class="header">${s === 'left' ? 'Original' : 'Modified'}</div>${this.#node(this.#tree, s, '')}</div>`).join('')}
+      </div>`
+    this.#bind()
   }
 
-  #renderTree(node, side, path, isRoot = true) {
-    const nodePath = path ? `${path}.${node.key}` : String(node.key)
-    const isExpanded = this.#expanded[nodePath] !== false
-    const hasChildren = node.children?.length > 0
-    const isContainer = node.isArray || node.isObject
+  #node(n, side, path, root = true) {
+    const p = path ? `${path}.${n.key}` : String(n.key)
+    const val = n[side]
+    const cls = n.hasDiff && n.type !== TYPE.UNCHANGED ? `diff-${n.type}` : ''
+    const dot = n.hasDiff && n.children?.some(c => c.hasDiff) ? `<span class="dot dot-${n.type === TYPE.UNCHANGED ? 'modified' : n.type}"></span>` : ''
+    const key = root ? '' : `<span class="key">${n.key}</span><span class="colon">:</span>`
 
-    const val = side === 'left' ? node.left : node.right
-    const diffClass = node.hasDiff && node.type !== TYPES.UNCHANGED ? `diff-${node.type}` : ''
-    const indicatorClass = node.hasDiff && node.children?.some(c => c.hasDiff) ? `indicator indicator-${node.type === TYPES.UNCHANGED ? 'modified' : node.type}` : ''
-
-    if (!isContainer) {
-      const [formatted, valueType] = formatValue(val)
-      return `
-        <div class="node ${isRoot ? 'node-root' : ''}">
-          <div class="line ${diffClass}">
-            <span class="toggle"></span>
-            ${indicatorClass ? `<span class="${indicatorClass}"></span>` : ''}
-            ${!isRoot ? `<span class="key">${node.key}</span><span class="colon">:</span>` : ''}
-            <span class="value-${valueType}">${formatted}</span>
-          </div>
-        </div>
-      `
+    if (!n.isArray && !n.isObject) {
+      const [v, t] = format(val)
+      return `<div class="node${root ? ' root' : ''}"><div class="line ${cls}"><span class="tog"></span>${dot}${key}<span class="val-${t}">${v}</span></div></div>`
     }
 
-    const bracket = node.isArray ? ['[', ']'] : ['{', '}']
-    const childCount = node.children?.length || 0
+    const [open, close] = n.isArray ? ['[', ']'] : ['{', '}']
+    const exp = this.#proxy[p] !== false
 
-    if (!isExpanded) {
-      return `
-        <div class="node ${isRoot ? 'node-root' : ''}">
-          <div class="line ${diffClass}" data-path="${nodePath}">
-            <span class="toggle">▶</span>
-            ${indicatorClass ? `<span class="${indicatorClass}"></span>` : ''}
-            ${!isRoot ? `<span class="key">${node.key}</span><span class="colon">:</span>` : ''}
-            <span class="bracket">${bracket[0]}</span>
-            <span class="collapsed-preview">${childCount} items</span>
-            <span class="bracket">${bracket[1]}</span>
-          </div>
-        </div>
-      `
-    }
+    if (!exp) return `<div class="node${root ? ' root' : ''}"><div class="line ${cls}" data-p="${p}"><span class="tog">▶</span>${dot}${key}<span class="br">${open}</span><span class="preview">${n.children?.length || 0}</span><span class="br">${close}</span></div></div>`
 
-    const childrenHtml = node.children?.map(c => this.#renderTree(c, side, nodePath, false)).join('') || ''
-
-    return `
-      <div class="node ${isRoot ? 'node-root' : ''}">
-        <div class="line ${diffClass}" data-path="${nodePath}">
-          <span class="toggle">▼</span>
-          ${indicatorClass ? `<span class="${indicatorClass}"></span>` : ''}
-          ${!isRoot ? `<span class="key">${node.key}</span><span class="colon">:</span>` : ''}
-          <span class="bracket">${bracket[0]}</span>
-        </div>
-        ${childrenHtml}
-        <div class="line">
-          <span class="toggle"></span>
-          <span class="bracket">${bracket[1]}</span>
-        </div>
-      </div>
-    `
+    return `<div class="node${root ? ' root' : ''}"><div class="line ${cls}" data-p="${p}"><span class="tog">▼</span>${dot}${key}<span class="br">${open}</span></div>${n.children?.map(c => this.#node(c, side, p, false)).join('') || ''}<div class="line"><span class="tog"></span><span class="br">${close}</span></div></div>`
   }
 
-  #bindEvents() {
-    const panels = this.shadowRoot.querySelectorAll('.panel')
-    const [leftPanel, rightPanel] = panels
-
-    let syncing = false
-    const syncScroll = source => e => {
-      if (syncing) return
-      syncing = true
-      const target = source === leftPanel ? rightPanel : leftPanel
-      target.scrollTop = e.target.scrollTop
-      target.scrollLeft = e.target.scrollLeft
-      syncing = false
-    }
-
-    leftPanel?.addEventListener('scroll', syncScroll(leftPanel))
-    rightPanel?.addEventListener('scroll', syncScroll(rightPanel))
-
-    this.shadowRoot.querySelectorAll('.line[data-path]').forEach(el => {
-      el.addEventListener('click', () => {
-        const path = el.dataset.path
-        this.#expanded[path] = this.#expanded[path] === false
-      })
-    })
+  #bind() {
+    const [l, r] = this.shadowRoot.querySelectorAll('.panel')
+    let sync = false
+    const scroll = src => e => { if (sync) return; sync = true; const t = src === l ? r : l; t.scrollTop = src.scrollTop; t.scrollLeft = src.scrollLeft; sync = false }
+    l?.addEventListener('scroll', scroll(l))
+    r?.addEventListener('scroll', scroll(r))
+    for (const el of this.shadowRoot.querySelectorAll('[data-p]')) el.onclick = () => (this.#proxy[el.dataset.p] = this.#proxy[el.dataset.p] === false)
+    this.shadowRoot.querySelector('[data-action="collapse"]')?.addEventListener('click', () => this.#collapseAll())
+    this.shadowRoot.querySelector('[data-action="expand"]')?.addEventListener('click', () => this.#expandAll())
   }
 }
 
 customElements.define('json-diff-viewer', JsonDiffViewer)
-
 export { JsonDiffViewer }

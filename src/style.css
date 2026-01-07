@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap');
 
 * {
   margin: 0;
@@ -8,8 +7,16 @@
 
 html, body {
   height: 100%;
-  background: #09090b;
+  background: linear-gradient(135deg, #0a0a0f 0%, #1a0f1a 50%, #0a0a0f 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 20s ease infinite;
   font-family: 'JetBrains Mono', monospace;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 #app {
@@ -21,9 +28,27 @@ html, body {
 }
 
 h1 {
-  color: #fafafa;
+  color: #886688;
   font-size: 1.25rem;
   font-weight: 600;
+  font-family: Bungee, system-ui;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.github-logo {
+  width: 42px;
+  height: 42px;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+h1 a {
+  display: inline-block;
+}
+
+h1 a:hover .github-logo {
+  opacity: 1;
 }
 
 json-diff-viewer {

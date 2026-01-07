@@ -1,14 +1,32 @@
 {
   "name": "json-diff-viewer-component",
-  "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "description": "Vanilla JS web component for side-by-side JSON diff visualization",
+  "keywords": [
+    "json",
+    "diff",
+    "viewer",
+    "web-component",
+    "custom-element",
+    "comparison"
+  ],
+  "license": "MIT",
+  "exports": {
+    ".": "./src/lib/viewer.js"
+  },
+  "files": [
+    "src/lib/**",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@fontsource/bungee": "^5.2.7",
     "vite": "^7.2.4"
   }
 }
