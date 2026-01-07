@@ -1,6 +1,6 @@
 {
   "name": "json-diff-viewer-component",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "type": "module",
   "description": "Vanilla JS web component for side-by-side JSON diff visualization",
   "keywords": [

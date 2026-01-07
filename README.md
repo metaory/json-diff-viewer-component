@@ -54,6 +54,60 @@ viewer.right = { name: "bar" };
 viewer.setData(leftObj, rightObj);
 ```
 
+<details>
+<summary>Framework Examples</summary>
+
+### React
+
+```jsx
+import { useEffect, useRef } from "react";
+import "json-diff-viewer-component";
+
+function DiffViewer({ left, right }) {
+  const viewerRef = useRef(null);
+
+  useEffect(() => {
+    if (viewerRef.current) {
+      viewerRef.current.setData(left, right);
+    }
+  }, [left, right]);
+
+  return <json-diff-viewer ref={viewerRef} />;
+}
+```
+
+### Vue
+
+```vue
+<template>
+  <json-diff-viewer ref="viewerRef" />
+</template>
+
+<script setup>
+import { ref, watch } from "vue";
+import "json-diff-viewer-component";
+
+const props = defineProps({
+  left: Object,
+  right: Object,
+});
+
+const viewerRef = ref(null);
+
+watch(
+  () => [props.left, props.right],
+  () => {
+    if (viewerRef.value) {
+      viewerRef.value.setData(props.left, props.right);
+    }
+  },
+  { immediate: true }
+);
+</script>
+```
+
+</details>
+
 ## Diff Types
 
 | Type         | Color  | Description                          |
