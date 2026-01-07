@@ -1,6 +1,8 @@
 # json-diff-viewer
 
-Vanilla JS web component for side-by-side JSON diff visualization.
+**Compare JSON side-by-side, visually**
+
+A zero-dependency web component for visualizing JSON differences with synchronized scrolling, collapsible nodes, and syntax highlighting. Perfect for debugging, API comparisons, and configuration diffs
 
 ## Features
 
@@ -24,17 +26,17 @@ npm i json-diff-viewer-component
 ### ES Module
 
 ```js
-import 'json-diff-viewer-component'
+import "json-diff-viewer-component";
 
-const viewer = document.querySelector('json-diff-viewer')
-viewer.setData(leftObj, rightObj)
+const viewer = document.querySelector("json-diff-viewer");
+viewer.setData(leftObj, rightObj);
 ```
 
 ### HTML Attributes
 
 ```html
-<json-diff-viewer 
-  left='{"name":"foo"}' 
+<json-diff-viewer
+  left='{"name":"foo"}'
   right='{"name":"bar"}'
 ></json-diff-viewer>
 ```
@@ -42,23 +44,23 @@ viewer.setData(leftObj, rightObj)
 ### Properties
 
 ```js
-viewer.left = { name: 'foo' }
-viewer.right = { name: 'bar' }
+viewer.left = { name: "foo" };
+viewer.right = { name: "bar" };
 ```
 
 ### Method
 
 ```js
-viewer.setData(leftObj, rightObj)
+viewer.setData(leftObj, rightObj);
 ```
 
 ## Diff Types
 
-| Type | Color | Description |
-|------|-------|-------------|
-| Added | Green | Key exists only in right |
-| Removed | Red | Key exists only in left |
-| Modified | Yellow | Value changed |
+| Type         | Color  | Description                          |
+| ------------ | ------ | ------------------------------------ |
+| Added        | Green  | Key exists only in right             |
+| Removed      | Red    | Key exists only in left              |
+| Modified     | Yellow | Value changed                        |
 | Type Changed | Orange | Type mismatch (e.g. number → string) |
 
 ## Styling
@@ -93,7 +95,7 @@ json-diff-viewer {
 
   /* Layout */
   --radius: 12px;
-  --font: 'JetBrains Mono', monospace;
+  --font: "JetBrains Mono", monospace;
 }
 ```
 
@@ -130,4 +132,4 @@ npm run build    # build for production
 
 ## License
 
-MIT
+[MIT](LICENSE)
