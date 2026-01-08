@@ -138,10 +138,11 @@ class JsonDiffViewer extends HTMLElement {
       ? ""
       : `<span class="key">${node.key}</span><span class="colon">:</span>`;
     const rootClass = root ? " root" : "";
+    const nodeDiffClass = hasDiff && !hasChildDiff ? ` ${diffClass}` : "";
 
     if (!node.isArray && !node.isObject) {
       const [val, type] = format(value);
-      return `<div class="node${rootClass}"><div class="line ${diffClass}"><span class="tog"></span>${dot}${keyHtml}<span class="val-${type}">${val}</span></div></div>`;
+      return `<div class="node${rootClass}${nodeDiffClass}"><div class="line"><span class="tog"></span>${dot}${keyHtml}<span class="val-${type}">${val}</span></div></div>`;
     }
 
     const [open, close] = node.isArray ? ["[", "]"] : ["{", "}"];
@@ -156,10 +157,10 @@ class JsonDiffViewer extends HTMLElement {
     const preview = `${filteredChildren.length}`;
 
     if (!isExpanded) {
-      return `<div class="node${rootClass}"><div class="line ${diffClass}" data-p="${currentPath}"><span class="tog">▶</span>${dot}${keyHtml}<span class="br">${open}</span><span class="preview">${preview}</span><span class="br">${close}</span></div></div>`;
+      return `<div class="node${rootClass}${nodeDiffClass}"><div class="line" data-p="${currentPath}"><span class="tog">▶</span>${dot}${keyHtml}<span class="br">${open}</span><span class="preview">${preview}</span><span class="br">${close}</span></div></div>`;
     }
 
-    return `<div class="node${rootClass}"><div class="line ${diffClass}" data-p="${currentPath}"><span class="tog">▼</span>${dot}${keyHtml}<span class="br">${open}</span></div>${childrenHtml}<div class="line"><span class="tog"></span><span class="br">${close}</span></div></div>`;
+    return `<div class="node${rootClass}${nodeDiffClass}"><div class="line" data-p="${currentPath}"><span class="tog">▼</span>${dot}${keyHtml}<span class="br">${open}</span></div>${childrenHtml}<div class="line"><span class="tog"></span><span class="br">${close}</span></div></div>`;
   }
 
   #bind() {

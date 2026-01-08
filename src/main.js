@@ -13,10 +13,10 @@ const themes = {
     key: "#38bdf8", str: "#a78bfa", num: "#34d399", bool: "#fb923c", nul: "#f472b6", br: "#71717a"
   },
   light: {
-    add: "#16a34a", rem: "#dc2626", mod: "#ca8a04", typ: "#ea580c",
-    bg: "#fafafa", bg2: "#ffffff", bdr: "#e4e4e7",
-    txt: "#18181b", dim: "#71717a",
-    key: "#0284c7", str: "#7c3aed", num: "#059669", bool: "#d97706", nul: "#c026d3", br: "#71717a"
+    add: "#15803d", rem: "#b91c1c", mod: "#ca8a04", typ: "#c2410c",
+    bg: "#ffffff", bg2: "#f9fafb", bdr: "#d1d5db",
+    txt: "#030712", dim: "#4b5563",
+    key: "#075985", str: "#6d28d9", num: "#047857", bool: "#b45309", nul: "#a21caf", br: "#6b7280"
   }
 }
 

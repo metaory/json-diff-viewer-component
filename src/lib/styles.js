@@ -15,7 +15,7 @@ export default `
 .node { padding-left: 1.25rem; }
 .node.root { padding-left: 0; }
 .line { display: flex; align-items: flex-start; gap: 0.5rem; padding: 2px 4px; border-radius: 4px; cursor: pointer; transition: background .15s; }
-.line:hover { background: rgba(255,255,255,.05); }
+.line:hover { background: rgba(0,0,0,.03); }
 .tog { width: 1rem; flex-shrink: 0; color: var(--br); user-select: none; }
 .tog:hover { color: var(--txt); }
 .key { color: var(--key); }
@@ -26,14 +26,14 @@ export default `
 .val-boolean { color: var(--bool); }
 .val-null { color: var(--nul); font-style: italic; }
 .br { color: var(--br); }
-.diff-added { background: rgba(34,197,94,.15); }
-.diff-removed { background: rgba(239,68,68,.15); }
-.diff-modified { background: rgba(234,179,8,.15); }
-.diff-type_changed { background: rgba(249,115,22,.15); }
-.diff-added .key { color: var(--add); }
-.diff-removed .key { color: var(--rem); }
-.diff-modified .key { color: var(--mod); }
-.diff-type_changed .key { color: var(--typ); }
+.node.diff-added { background: rgba(34,197,94,.15); }
+.node.diff-removed { background: rgba(239,68,68,.15); }
+.node.diff-modified { background: rgba(234,179,8,.15); }
+.node.diff-type_changed { background: rgba(249,115,22,.15); }
+.node.diff-added .key { color: var(--add); }
+.node.diff-removed .key { color: var(--rem); }
+.node.diff-modified .key { color: var(--mod); }
+.node.diff-type_changed .key { color: var(--typ); }
 .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
 .dot-added { background: var(--add); }
 .dot-removed { background: var(--rem); }
@@ -46,7 +46,7 @@ export default `
 .stats-buttons { display: flex; gap: 0.5rem; }
 .btn-filter, .btn-collapse, .btn-expand { padding: 0.5rem; background: var(--bg2); border: 1px solid var(--bdr); border-radius: 6px; color: var(--txt); cursor: pointer; transition: background .15s, border-color .15s; display: flex; align-items: center; justify-content: center; }
 .btn-filter svg, .btn-collapse svg, .btn-expand svg { width: 18px; height: 18px; }
-.btn-filter:hover, .btn-collapse:hover, .btn-expand:hover { background: rgba(255,255,255,.05); border-color: var(--dim); }
+.btn-filter:hover, .btn-collapse:hover, .btn-expand:hover { background: rgba(0,0,0,.05); border-color: var(--dim); }
 .btn-filter .checkbox-icon { opacity: 0.3; transition: opacity .15s; }
 .btn-filter .checkbox-icon.checked { opacity: 1; }
 .stat { display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: .35rem; }
