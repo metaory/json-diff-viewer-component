@@ -44,9 +44,11 @@ export default `
 .preview::after { content: ' items'; }
 .stats { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .75rem 1rem; background: var(--bg); border-bottom: 2px solid var(--bdr); font-size: 12px; }
 .stats-buttons { display: flex; gap: 0.5rem; }
-.btn-collapse, .btn-expand { padding: 0.5rem; background: var(--bg2); border: 1px solid var(--bdr); border-radius: 6px; color: var(--txt); cursor: pointer; transition: background .15s, border-color .15s; display: flex; align-items: center; justify-content: center; }
-.btn-collapse svg, .btn-expand svg { width: 18px; height: 18px; }
-.btn-collapse:hover, .btn-expand:hover { background: rgba(255,255,255,.05); border-color: var(--dim); }
+.btn-filter, .btn-collapse, .btn-expand { padding: 0.5rem; background: var(--bg2); border: 1px solid var(--bdr); border-radius: 6px; color: var(--txt); cursor: pointer; transition: background .15s, border-color .15s; display: flex; align-items: center; justify-content: center; }
+.btn-filter svg, .btn-collapse svg, .btn-expand svg { width: 18px; height: 18px; }
+.btn-filter:hover, .btn-collapse:hover, .btn-expand:hover { background: rgba(255,255,255,.05); border-color: var(--dim); }
+.btn-filter .checkbox-icon { opacity: 0.3; transition: opacity .15s; }
+.btn-filter .checkbox-icon.checked { opacity: 1; }
 .stat { display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: .35rem; }
 .stat .dot { width: 8px; height: 8px; }
 .stat-added .dot { background: var(--add); }

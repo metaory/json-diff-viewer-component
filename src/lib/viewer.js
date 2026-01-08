@@ -26,6 +26,7 @@ class JsonDiffViewer extends HTMLElement {
     },
   });
   #stats = {};
+  #showOnlyChanged = false;
 
   static observedAttributes = ["left", "right"];
   constructor() {
@@ -105,6 +106,11 @@ class JsonDiffViewer extends HTMLElement {
       <div class="stats">
         ${STAT_TYPES.map((t) => `<div class="stat stat-${t}"><span class="dot"></span>${this.#stats[t]} ${t.replace("_", " ")}</div>`).join("")}
         <div class="stats-buttons">
+          <button class="btn-filter" data-action="filter" aria-label="Show only changed">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="checkbox-icon ${this.#showOnlyChanged ? 'checked' : ''}">
+              <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+          </button>
           <button class="btn-collapse" data-action="collapse"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M9 15H6q-.425 0-.712-.288T5 14t.288-.712T6 13h4q.425 0 .713.288T11 14v4q0 .425-.288.713T10 19t-.712-.288T9 18zm6-6h3q.425 0 .713.288T19 10t-.288.713T18 11h-4q-.425 0-.712-.288T13 10V6q0-.425.288-.712T14 5t.713.288T15 6z"/></svg></button>
           <button class="btn-expand" data-action="expand"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7 17h3q.425 0 .713.288T11 18t-.288.713T10 19H6q-.425 0-.712-.288T5 18v-4q0-.425.288-.712T6 13t.713.288T7 14zM17 7h-3q-.425 0-.712-.288T13 6t.288-.712T14 5h4q.425 0 .713.288T19 6v4q0 .425-.288.713T18 11t-.712-.288T17 10z"/></svg></button>
         </div>
@@ -140,11 +146,14 @@ class JsonDiffViewer extends HTMLElement {
 
     const [open, close] = node.isArray ? ["[", "]"] : ["{", "}"];
     const isExpanded = this.#proxy[currentPath] !== false;
+    const filteredChildren = this.#showOnlyChanged
+      ? node.children?.filter((c) => c.hasDiff) || []
+      : node.children || [];
     const childrenHtml =
-      node.children
-        ?.map((c) => this.#node(c, side, currentPath, false))
+      filteredChildren
+        .map((c) => this.#node(c, side, currentPath, false))
         .join("") || "";
-    const preview = `${node.children?.length || 0}`;
+    const preview = `${filteredChildren.length}`;
 
     if (!isExpanded) {
       return `<div class="node${rootClass}"><div class="line ${diffClass}" data-p="${currentPath}"><span class="tog">▶</span>${dot}${keyHtml}<span class="br">${open}</span><span class="preview">${preview}</span><span class="br">${close}</span></div></div>`;
@@ -175,6 +184,12 @@ class JsonDiffViewer extends HTMLElement {
       };
     }
 
+    this.shadowRoot
+      .querySelector('[data-action="filter"]')
+      ?.addEventListener("click", () => {
+        this.#showOnlyChanged = !this.#showOnlyChanged;
+        this.#render();
+      });
     this.shadowRoot
       .querySelector('[data-action="collapse"]')
       ?.addEventListener("click", () => this.#collapseAll());
