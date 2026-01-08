@@ -21,12 +21,14 @@ const themes = {
 }
 
 const applyTheme = (theme) => {
-  const tokens = themes[theme]
-  Object.entries(tokens).forEach(([key, value]) => viewer.style.setProperty(`--${key}`, value))
-  toggle.textContent = theme === "dark" ? "Dark" : "Light"
-  document.documentElement.setAttribute("data-theme", theme)
-  localStorage.setItem("json-diff-viewer-theme", theme)
-}
+  const tokens = themes[theme];
+  for (const [key, value] of Object.entries(tokens)) {
+    viewer.style.setProperty(`--${key}`, value);
+  }
+  toggle.textContent = theme === "dark" ? "Dark" : "Light";
+  document.documentElement.setAttribute("data-theme", theme);
+  localStorage.setItem("json-diff-viewer-theme", theme);
+};
 
 const getTheme = () => localStorage.getItem("json-diff-viewer-theme") || "dark"
 applyTheme(getTheme())
