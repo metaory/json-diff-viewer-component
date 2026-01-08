@@ -45,13 +45,13 @@ h1 {
 }
 .header-controls {
   display: flex;
-  gap: 0.5rem;
+  gap: 2rem;
   align-items: center;
 }
 #theme-toggle {
   padding: 0.35rem 0.75rem;
-  background: rgba(255,255,255,.1);
-  border: 1px solid rgba(255,255,255,.2);
+  background: transparent;
+  border: 2px solid #44115588;
   border-radius: 6px;
   color: inherit;
   font-family: inherit;
@@ -60,8 +60,8 @@ h1 {
   transition: background .15s, border-color .15s;
 }
 #theme-toggle:hover {
-  background: rgba(255,255,255,.15);
-  border-color: rgba(255,255,255,.3);
+  background: white;
+  border-color: white;
 }
 .github-logo {
   width: 42px;

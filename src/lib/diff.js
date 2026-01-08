@@ -1,4 +1,4 @@
-const TYPE = { UNCHANGED: 'unchanged', ADDED: 'added', REMOVED: 'removed', MODIFIED: 'modified', TYPE_CHANGED: 'type_changed' }
+const TYPE = { UNCHANGED: 'unchanged', ADDED: 'added', REMOVED: 'removed', MODIFIED: 'modified' }
 
 const typeOf = (v) => {
   if (v === null) return 'null';
@@ -57,11 +57,10 @@ const diff = (left, right, key = 'root') => {
   }
   if (!isObj(left) && !isObj(right)) {
     if (left === right) return node(key, TYPE.UNCHANGED, left, right);
-    if (typeOf(left) !== typeOf(right)) return node(key, TYPE.TYPE_CHANGED, left, right);
     return node(key, TYPE.MODIFIED, left, right);
   }
   if (typeOf(left) !== typeOf(right)) {
-    return node(key, TYPE.TYPE_CHANGED, left, right, { children: [], ...container(left, Array.isArray(left)) });
+    return node(key, TYPE.MODIFIED, left, right, { children: [], ...container(left, Array.isArray(left)) });
   }
   return diffContainer(left, right, key, Array.isArray(left));
 };

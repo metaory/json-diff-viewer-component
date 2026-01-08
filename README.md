@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="public/logo.svg" alt="logo" height="128" />
+    <img src="https://raw.githubusercontent.com/metaory/json-diff-viewer-component/refs/heads/master/public/logo.svg" alt="logo" height="128" />
     <h2>json-diff-viewer</h2>
     <h5>
         Compare JSON side-by-side, visually
@@ -11,7 +11,7 @@
         <br>
         Perfect for debugging, API comparisons, and configuration diffs
     </p>
-    <img src="public/screenshot.png" alt="demo" width="80%" />
+    <img src="https://raw.githubusercontent.com/metaory/json-diff-viewer-component/refs/heads/master/public/screenshot.png" alt="demo" width="80%" />
     <h5>
         <a href="https://metaory.github.io/json-diff-viewer-component/" target="_blank">metaory.github.io/json-diff-viewer-component</a>
     </h5>
@@ -23,7 +23,7 @@
 - Side-by-side synchronized scrolling
 - Collapsible nodes (synced between panels)
 - Diff indicators bubble up to parent nodes
-- Stats summary (added/removed/modified/type-changed)
+- Stats summary (added/removed/modified)
 - Syntax highlighting
 - Zero dependencies
 - Shadow DOM encapsulation
@@ -123,12 +123,11 @@ watch(
 
 ## Diff Types
 
-| Type         | Color  | Description                          |
-| ------------ | ------ | ------------------------------------ |
-| Added        | Green  | Key exists only in right             |
-| Removed      | Red    | Key exists only in left              |
-| Modified     | Yellow | Value changed                        |
-| Type Changed | Orange | Type mismatch (e.g. number → string) |
+| Type     | Color  | Description              |
+| -------- | ------ | ------------------------ |
+| Added    | Green  | Key exists only in right |
+| Removed  | Red    | Key exists only in left  |
+| Modified | Yellow | Value changed            |
 
 ## Styling
 
@@ -142,7 +141,6 @@ json-diff-viewer {
   --add: #22c55e; /* Added items */
   --rem: #ef4444; /* Removed items */
   --mod: #eab308; /* Modified items */
-  --typ: #f97316; /* Type changed items */
 
   /* Backgrounds */
   --bg: #18181b; /* Main background */
