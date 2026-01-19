@@ -16,6 +16,8 @@ export default `
 .node.root { padding-left: 0; }
 .line { display: flex; align-items: flex-start; gap: 0.5rem; padding: 2px 4px; border-radius: 4px; cursor: pointer; transition: background .15s; }
 .line:hover { background: rgba(0,0,0,.03); }
+.line.placeholder { cursor: default; pointer-events: none; }
+.line.placeholder:hover { background: transparent; }
 .tog { width: 1rem; flex-shrink: 0; color: var(--br); user-select: none; }
 .tog:hover { color: var(--txt); }
 .key { color: var(--key); }

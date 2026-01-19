@@ -129,6 +129,38 @@ class JsonDiffViewer extends HTMLElement {
     this.#bind();
   }
 
+  #placeholder(node, side, path, root = true) {
+    const currentPath = path ? `${path}.${node.key}` : String(node.key);
+    const value = node[side];
+    const keyHtml = root ? "" : `<span class="key" style="visibility: hidden;">${node.key}</span><span class="colon" style="visibility: hidden;">:</span>`;
+    const rootClass = root ? " root" : "";
+
+    if (!node.isArray && !node.isObject) {
+      if (value === undefined) {
+        return `<div class="node${rootClass}"><div class="line placeholder"><span class="tog"></span>${keyHtml}</div></div>`;
+      }
+      const [val, type] = format(value);
+      return `<div class="node${rootClass}"><div class="line placeholder"><span class="tog"></span>${keyHtml}<span class="val-${type}" style="visibility: hidden;">${val}</span></div></div>`;
+    }
+
+    const [open, close] = node.isArray ? ["[", "]"] : ["{", "}"];
+    const children = node.children || [];
+    const isExpanded = this.#proxy[currentPath] !== false;
+    const filteredChildren = this.#showOnlyChanged
+      ? children.filter((c) => c.hasDiff)
+      : children;
+    const childrenHtml = isExpanded
+      ? filteredChildren.map((c) => this.#placeholder(c, side, currentPath, false)).join("")
+      : "";
+    const preview = `${filteredChildren.length}`;
+
+    if (!isExpanded) {
+      return `<div class="node${rootClass}"><div class="line placeholder"><span class="tog">▶</span>${keyHtml}<span class="br" style="visibility: hidden;">${open}</span><span class="preview" style="visibility: hidden;">${preview}</span><span class="br" style="visibility: hidden;">${close}</span></div></div>`;
+    }
+
+    return `<div class="node${rootClass}"><div class="line placeholder"><span class="tog">▼</span>${keyHtml}<span class="br" style="visibility: hidden;">${open}</span></div>${childrenHtml}<div class="line placeholder"><span class="tog"></span><span class="br" style="visibility: hidden;">${close}</span></div></div>`;
+  }
+
   #node(node, side, path, root = true) {
     const currentPath = path ? `${path}.${node.key}` : String(node.key);
     const value = node[side];
@@ -143,6 +175,13 @@ class JsonDiffViewer extends HTMLElement {
     const rootClass = root ? " root" : "";
     const nodeDiffClass = hasDiff && !hasChildDiff ? ` ${diffClass}` : "";
 
+    if (value === undefined) {
+      if (node.children?.length) {
+        return this.#placeholder(node, side, path, root);
+      }
+      return `<div class="node${rootClass}"><div class="line placeholder"><span class="tog"></span>${root ? "" : `<span class="key" style="visibility: hidden;">${node.key}</span><span class="colon" style="visibility: hidden;">:</span>`}</div></div>`;
+    }
+
     if (!node.isArray && !node.isObject) {
       const [val, type] = format(value);
       return `<div class="node${rootClass}${nodeDiffClass}"><div class="line"><span class="tog"></span>${dot}${keyHtml}<span class="val-${type}">${val}</span></div></div>`;
@@ -153,10 +192,7 @@ class JsonDiffViewer extends HTMLElement {
     const filteredChildren = this.#showOnlyChanged
       ? node.children?.filter((c) => c.hasDiff) || []
       : node.children || [];
-    const childrenHtml =
-      filteredChildren
-        .map((c) => this.#node(c, side, currentPath, false))
-        .join("") || "";
+    const childrenHtml = filteredChildren.map((c) => this.#node(c, side, currentPath, false)).join("");
     const preview = `${filteredChildren.length}`;
 
     if (!isExpanded) {
