@@ -12,7 +12,6 @@ export default `
 .container { display: grid; grid-template-columns: 1fr 1fr; flex: 1; min-height: 0; }
 .panel { overflow: auto; padding: 1rem; background: var(--bg2); scrollbar-width: thin; scrollbar-color: var(--bdr) transparent; }
 .panel:first-child { border-right: 2px solid var(--bdr); }
-.header { padding: 0.25rem 0 0.5rem; font-weight: 600; color: var(--dim); border-bottom: 1px solid var(--bdr); margin-bottom: 0.5rem; font-size: 11px; }
 .node { padding-left: 1.25rem; }
 .node.root { padding-left: 0; }
 .line { display: flex; align-items: flex-start; gap: 0.5rem; padding: 2px 4px; border-radius: 4px; cursor: pointer; transition: background .15s; }

@@ -185,10 +185,27 @@ json-diff-viewer {
 
 ### Sizing
 
+The component requires a defined height to enable scrolling. Without a height, the component will expand to fit all content.
+
 ```css
 json-diff-viewer {
   height: 600px;
   border-radius: 16px;
+}
+```
+
+For full-height layouts, use flexbox:
+
+```css
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+json-diff-viewer {
+  flex: 1;
+  min-height: 0;
 }
 ```
 

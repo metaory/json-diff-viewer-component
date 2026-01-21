@@ -159,8 +159,7 @@ class JsonDiffViewer extends HTMLElement {
       <div class="container">
         ${["left", "right"]
           .map((side) => {
-            const label = side === "left" ? "Original" : "Modified";
-            return `<div class="panel" data-side="${side}"><div class="header">${label}</div>${this.#renderNode(this.#tree, side, "")}</div>`;
+            return `<div class="panel" data-side="${side}">${this.#renderNode(this.#tree, side, "")}</div>`;
           })
           .join("")}
       </div>`;
