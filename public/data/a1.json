@@ -4,10 +4,12 @@
   "description": "A sample project for testing",
   "active": true,
   "priority": 5,
+  "status": "beta",
   "config": {
     "debug": true,
     "timeout": 5000,
     "retries": 3,
+    "maxConnections": 50,
     "logging": {
       "level": "info",
       "format": "json",
@@ -35,24 +37,35 @@
       "pool": {
         "min": 2,
         "max": 10
-      }
+      },
+      "ssl": false,
+      "backup": true
+    },
+    "legacy": {
+      "enabled": true,
+      "endpoints": ["/v1", "/v2"]
     }
   },
   "users": [
-    {"id": 1, "name": "Alice", "role": "admin", "active": true, "email": "alice@example.com"},
-    {"id": 2, "name": "Bob", "role": "user", "active": true, "email": "bob@example.com"},
-    {"id": 3, "name": "Carol", "role": "editor", "active": true, "email": "carol@example.com"}
+    {"id": 1, "name": "Alice", "role": "admin", "active": true, "email": "alice@example.com", "verified": false},
+    {"id": 2, "name": "Bob", "role": "user", "active": true, "email": "bob@example.com", "verified": false},
+    {"id": 3, "name": "Carol", "role": "editor", "active": true, "email": "carol@example.com", "verified": true}
   ],
   "teams": {
     "engineering": {
       "lead": "Alice",
-      "members": ["Bob", "Carol", "Dave"],
+      "members": ["Bob", "Carol"],
       "projects": ["api", "frontend", "mobile"]
     },
     "design": {
       "lead": "Eve",
       "members": ["Frank", "Grace"],
       "projects": ["ui-kit", "branding"]
+    },
+    "beta": {
+      "lead": "Frank",
+      "members": ["Grace"],
+      "projects": ["experimental"]
     }
   },
   "permissions": {
@@ -85,31 +98,43 @@
     "performance": {
       "avgLatency": 120,
       "p99Latency": 450,
-      "uptime": 99.9
+      "uptime": 99.9,
+      "errorRate": 0.05,
+      "throughput": 1000
+    },
+    "cache": {
+      "hits": 80000,
+      "misses": 20000,
+      "hitRate": 0.8
     }
   },
   "integrations": {
     "slack": {
       "enabled": true,
-      "channel": "#alerts",
+      "channel": "#dev-alerts",
       "events": ["error", "warning"]
     },
     "github": {
       "enabled": true,
       "repo": "org/project",
       "branch": "main"
+    },
+    "jira": {
+      "enabled": true,
+      "project": "PROJ",
+      "board": "sprint"
     }
-  },
-  "deprecated": {
-    "oldApi": true,
-    "legacyAuth": true
   },
   "limits": {
     "maxFileSize": "50MB",
-    "maxRequests": 10000,
+    "maxRequests": 5000,
     "quotas": {
       "storage": "100GB",
       "bandwidth": "1TB"
+    },
+    "rateLimit": {
+      "tier1": 500,
+      "tier2": 2000
     }
   },
   "notifications": {
@@ -120,8 +145,10 @@
   },
   "schedule": {
     "backup": "0 0 * * *",
-    "cleanup": "0 3 * * 0",
-    "reports": "0 9 * * 1"
+    "cleanup": "0 2 * * 0",
+    "reports": "0 9 * * 1",
+    "sync": "0 */4 * * *",
+    "maintenance": "0 1 * * 0"
   },
   "experiments": {
     "darkMode": {
@@ -131,6 +158,20 @@
     "newCheckout": {
       "enabled": true,
       "percentage": 25
+    },
+    "betaFeatures": {
+      "enabled": false,
+      "percentage": 0
     }
-  }
+  },
+  "deprecated": {
+    "oldApi": true,
+    "legacyAuth": false
+  },
+  "maintenance": {
+    "mode": false,
+    "message": "Scheduled maintenance on Sunday",
+    "startTime": "2024-01-21T02:00:00Z"
+  },
+  "changelog": "v1.0.0: Initial release with core features"
 }
