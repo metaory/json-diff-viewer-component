@@ -1,0 +1,136 @@
+{
+  "name": "Project Alpha",
+  "version": "1.0.0",
+  "description": "A sample project for testing",
+  "active": true,
+  "priority": 5,
+  "config": {
+    "debug": true,
+    "timeout": 5000,
+    "retries": 3,
+    "logging": {
+      "level": "info",
+      "format": "json",
+      "outputs": ["console", "file"],
+      "rotation": {
+        "enabled": true,
+        "maxSize": "10MB",
+        "maxFiles": 5
+      }
+    },
+    "features": {
+      "auth": true,
+      "cache": false,
+      "analytics": true,
+      "rateLimit": {
+        "enabled": true,
+        "requests": 100,
+        "window": "1m"
+      }
+    },
+    "database": {
+      "host": "localhost",
+      "port": 5432,
+      "name": "app_db",
+      "pool": {
+        "min": 2,
+        "max": 10
+      }
+    }
+  },
+  "users": [
+    {"id": 1, "name": "Alice", "role": "admin", "active": true, "email": "alice@example.com"},
+    {"id": 2, "name": "Bob", "role": "user", "active": true, "email": "bob@example.com"},
+    {"id": 3, "name": "Carol", "role": "editor", "active": true, "email": "carol@example.com"}
+  ],
+  "teams": {
+    "engineering": {
+      "lead": "Alice",
+      "members": ["Bob", "Carol", "Dave"],
+      "projects": ["api", "frontend", "mobile"]
+    },
+    "design": {
+      "lead": "Eve",
+      "members": ["Frank", "Grace"],
+      "projects": ["ui-kit", "branding"]
+    }
+  },
+  "permissions": {
+    "admin": ["read", "write", "delete", "manage"],
+    "editor": ["read", "write"],
+    "user": ["read"]
+  },
+  "metadata": {
+    "created": "2024-01-15",
+    "updated": "2024-01-20",
+    "author": "system",
+    "tags": ["production", "stable"],
+    "environment": "production"
+  },
+  "history": [
+    {"action": "create", "timestamp": "2024-01-15T10:00:00Z", "user": "admin"},
+    {"action": "update", "timestamp": "2024-01-20T14:30:00Z", "user": "alice"}
+  ],
+  "stats": {
+    "requests": {
+      "total": 100000,
+      "success": 95000,
+      "failed": 5000
+    },
+    "users": {
+      "total": 500,
+      "active": 450,
+      "new": 25
+    },
+    "performance": {
+      "avgLatency": 120,
+      "p99Latency": 450,
+      "uptime": 99.9
+    }
+  },
+  "integrations": {
+    "slack": {
+      "enabled": true,
+      "channel": "#alerts",
+      "events": ["error", "warning"]
+    },
+    "github": {
+      "enabled": true,
+      "repo": "org/project",
+      "branch": "main"
+    }
+  },
+  "deprecated": {
+    "oldApi": true,
+    "legacyAuth": true
+  },
+  "limits": {
+    "maxFileSize": "50MB",
+    "maxRequests": 10000,
+    "quotas": {
+      "storage": "100GB",
+      "bandwidth": "1TB"
+    }
+  },
+  "notifications": {
+    "email": true,
+    "sms": false,
+    "push": true,
+    "channels": ["email", "push"]
+  },
+  "schedule": {
+    "backup": "0 0 * * *",
+    "cleanup": "0 3 * * 0",
+    "reports": "0 9 * * 1"
+  },
+  "experiments": {
+    "darkMode": {
+      "enabled": false,
+      "percentage": 0
+    },
+    "newCheckout": {
+      "enabled": true,
+      "percentage": 25
+    }
+  }
+}

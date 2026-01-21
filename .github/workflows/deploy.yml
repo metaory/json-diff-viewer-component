@@ -29,11 +29,6 @@ jobs:
 
       - run: npm ci
 
-      - name: Copy sample data files
-        run: |
-          mkdir -p public/data
-          cp data/*.json public/data/
-
       - run: npm run build
 
       - uses: actions/configure-pages@v4

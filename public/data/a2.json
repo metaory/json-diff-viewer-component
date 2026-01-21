@@ -1,0 +1,182 @@
+{
+  "name": "Project Alpha",
+  "version": "2.0.0",
+  "description": "An updated sample project with new features",
+  "active": true,
+  "priority": 8,
+  "status": "released",
+  "config": {
+    "debug": false,
+    "timeout": 10000,
+    "retries": 5,
+    "logging": {
+      "level": "warn",
+      "format": "structured",
+      "outputs": ["console", "file", "cloud"],
+      "rotation": {
+        "enabled": true,
+        "maxSize": "50MB",
+        "maxFiles": 10,
+        "compress": true
+      }
+    },
+    "features": {
+      "auth": true,
+      "cache": true,
+      "analytics": true,
+      "notifications": true,
+      "rateLimit": {
+        "enabled": true,
+        "requests": 500,
+        "window": "1m",
+        "burstLimit": 50
+      }
+    },
+    "database": {
+      "host": "db.production.internal",
+      "port": 5432,
+      "name": "app_db_v2",
+      "pool": {
+        "min": 5,
+        "max": 50,
+        "idleTimeout": 30000
+      },
+      "replicas": ["replica-1", "replica-2"]
+    },
+    "redis": {
+      "host": "redis.internal",
+      "port": 6379,
+      "cluster": true
+    }
+  },
+  "users": [
+    {"id": 1, "name": "Alice", "role": "superadmin", "active": true, "email": "alice@example.com", "verified": true},
+    {"id": 2, "name": "Bob", "role": "user", "active": false, "email": "robert@example.com"},
+    {"id": 4, "name": "Diana", "role": "admin", "active": true, "email": "diana@example.com"},
+    {"id": 5, "name": "Eric", "role": "editor", "active": true, "email": "eric@example.com"}
+  ],
+  "teams": {
+    "engineering": {
+      "lead": "Alice",
+      "members": ["Bob", "Diana", "Eric", "Frank"],
+      "projects": ["api", "frontend", "mobile", "infrastructure"]
+    },
+    "design": {
+      "lead": "Grace",
+      "members": ["Henry", "Ivy"],
+      "projects": ["ui-kit", "branding", "design-system"]
+    },
+    "marketing": {
+      "lead": "Jack",
+      "members": ["Kate", "Leo"],
+      "projects": ["campaigns", "analytics"]
+    }
+  },
+  "permissions": {
+    "superadmin": ["read", "write", "delete", "manage", "audit"],
+    "admin": ["read", "write", "delete", "manage"],
+    "editor": ["read", "write", "comment"],
+    "user": ["read", "comment"]
+  },
+  "metadata": {
+    "created": "2024-01-15",
+    "updated": "2024-06-15",
+    "author": "alice",
+    "tags": ["production", "stable", "v2", "featured"],
+    "environment": "production",
+    "region": "us-east-1"
+  },
+  "history": [
+    {"action": "create", "timestamp": "2024-01-15T10:00:00Z", "user": "admin"},
+    {"action": "update", "timestamp": "2024-01-20T14:30:00Z", "user": "alice"},
+    {"action": "migrate", "timestamp": "2024-03-01T09:00:00Z", "user": "system"},
+    {"action": "upgrade", "timestamp": "2024-06-15T12:00:00Z", "user": "alice", "notes": "Major version upgrade"}
+  ],
+  "stats": {
+    "requests": {
+      "total": 500000,
+      "success": 485000,
+      "failed": 15000,
+      "cached": 250000
+    },
+    "users": {
+      "total": 2500,
+      "active": 2100,
+      "new": 150,
+      "premium": 500
+    },
+    "performance": {
+      "avgLatency": 85,
+      "p99Latency": 320,
+      "uptime": 99.99,
+      "errorRate": 0.03
+    }
+  },
+  "integrations": {
+    "slack": {
+      "enabled": true,
+      "channel": "#production-alerts",
+      "events": ["error", "warning", "deployment"]
+    },
+    "github": {
+      "enabled": true,
+      "repo": "org/project-v2",
+      "branch": "main",
+      "actions": true
+    },
+    "datadog": {
+      "enabled": true,
+      "apiKey": "***",
+      "metrics": ["latency", "errors", "throughput"]
+    }
+  },
+  "limits": {
+    "maxFileSize": "100MB",
+    "maxRequests": 50000,
+    "quotas": {
+      "storage": "500GB",
+      "bandwidth": "5TB",
+      "apiCalls": "1M"
+    },
+    "rateLimit": {
+      "tier1": 1000,
+      "tier2": 5000,
+      "tier3": 20000
+    }
+  },
+  "notifications": {
+    "email": true,
+    "sms": true,
+    "push": true,
+    "webhook": true,
+    "channels": ["email", "push", "sms", "webhook"]
+  },
+  "schedule": {
+    "backup": "0 */6 * * *",
+    "cleanup": "0 3 * * *",
+    "reports": "0 9 * * 1",
+    "healthCheck": "*/5 * * * *"
+  },
+  "experiments": {
+    "darkMode": {
+      "enabled": true,
+      "percentage": 100
+    },
+    "newCheckout": {
+      "enabled": true,
+      "percentage": 100,
+      "graduated": true
+    },
+    "aiAssistant": {
+      "enabled": true,
+      "percentage": 10,
+      "models": ["gpt-4", "claude"]
+    }
+  },
+  "compliance": {
+    "gdpr": true,
+    "soc2": true,
+    "hipaa": false
+  },
+  "changelog": "v2.0.0: Major update with performance improvements, new integrations, and enhanced security"
+}
