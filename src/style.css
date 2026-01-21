@@ -10,12 +10,12 @@ html, body {
   font-family: 'JetBrains Mono', monospace;
 }
 html[data-theme="dark"], html[data-theme="dark"] body {
-  background: linear-gradient(135deg, #0a0a0f 0%, #1a0f1a 50%, #0a0a0f 100%);
+  background: linear-gradient(135deg, #18181b 0%, #27272a 50%, #18181b 100%);
   background-size: 400% 400%;
   animation: gradientShift 20s ease infinite;
 }
 html[data-theme="light"], html[data-theme="light"] body {
-  background: linear-gradient(135deg, #f5f5f7 0%, #e8e8ed 50%, #f5f5f7 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 50%, #ffffff 100%);
   background-size: 400% 400%;
   animation: gradientShift 20s ease infinite;
 }
@@ -35,13 +35,18 @@ html[data-theme="light"], html[data-theme="light"] body {
 }
 
 h1 {
-  color: #886688;
   font-size: 1.25rem;
   font-weight: 600;
   font-family: Bungee, system-ui;
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+html[data-theme="dark"] h1 {
+  color: #fafafa;
+}
+html[data-theme="light"] h1 {
+  color: #030712;
 }
 .header-controls {
   display: flex;
@@ -51,39 +56,61 @@ h1 {
 #theme-toggle {
   padding: 0.35rem 0.75rem;
   background: transparent;
-  border: 2px solid #44115588;
   border-radius: 6px;
-  color: inherit;
   font-family: inherit;
   font-size: 11px;
   cursor: pointer;
   transition: background .15s, border-color .15s;
 }
-#theme-toggle:hover {
-  background: white;
-  border-color: white;
+html[data-theme="dark"] #theme-toggle {
+  border: 2px solid #3f3f46;
+  color: #fafafa;
+}
+html[data-theme="dark"] #theme-toggle:hover {
+  background: #fafafa;
+  border-color: #fafafa;
+  color: #18181b;
+}
+html[data-theme="light"] #theme-toggle {
+  border: 2px solid #d1d5db;
+  color: #030712;
+}
+html[data-theme="light"] #theme-toggle:hover {
+  background: #030712;
+  border-color: #030712;
+  color: #ffffff;
 }
 .github-logo {
   width: 42px;
   height: 42px;
-  opacity: 0.8;
-  transition: opacity 0.2s;
+  transition: filter 0.2s;
+}
+html[data-theme="dark"] .github-logo {
+  filter: brightness(0) invert(0.63);
+}
+html[data-theme="light"] .github-logo {
+  filter: brightness(0) invert(0.3);
 }
 
 h1 a {
   display: inline-block;
 }
 
-h1 a:hover .github-logo {
-  opacity: 1;
+html[data-theme="dark"] h1 a:hover .github-logo {
+  filter: brightness(0) invert(0.98);
+}
+html[data-theme="light"] h1 a:hover .github-logo {
+  filter: brightness(0) invert(0.12);
 }
 
 json-diff-viewer {
   flex: 1;
   min-height: 0;
-  border: 2px solid #3f3f46;
   border-radius: 16px;
 }
+html[data-theme="dark"] json-diff-viewer {
+  border: 2px solid #3f3f46;
+}
 html[data-theme="light"] json-diff-viewer {
-  border-color: #e4e4e7;
+  border: 2px solid #d1d5db;
 }

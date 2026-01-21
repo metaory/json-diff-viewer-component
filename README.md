@@ -24,6 +24,7 @@
 - Collapsible nodes (synced between panels)
 - Diff indicators bubble up to parent nodes
 - Stats summary (added/removed/modified)
+- Show only changed filter toggle
 - Syntax highlighting
 - Zero dependencies
 - Shadow DOM encapsulation
@@ -152,6 +153,9 @@ json-diff-viewer {
   /* Text */
   --txt: #fafafa; /* Primary text */
   --dim: #a1a1aa; /* Dimmed/secondary text */
+
+  /* Controls */
+  --slider: var(--bdr); /* Slider toggle active color */
 
   /* Syntax highlighting */
   --key: #38bdf8; /* Object keys */

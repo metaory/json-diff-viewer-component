@@ -4,7 +4,7 @@ export default `
   --bg: #18181b; --bg2: #27272a; --bdr: #3f3f46;
   --txt: #fafafa; --dim: #a1a1aa;
   --key: #38bdf8; --str: #a78bfa; --num: #34d399; --bool: #fb923c; --nul: #f472b6; --br: #71717a;
-  --slider: var(--mod);
+  --slider: var(--bdr);
   display: flex; flex-direction: column; font: 13px 'JetBrains Mono', 'Fira Code', monospace;
   background: var(--bg); color: var(--txt); border-radius: 12px; overflow: hidden;
 }
