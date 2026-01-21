@@ -26,6 +26,7 @@ const getContainerProps = (val) => {
 };
 
 const mapChildrenForSide = (val, side) => {
+  const type = side === 'added' ? TYPE.ADDED : TYPE.REMOVED;
   const createChildNode = (value, key) => {
     const leftValue = side === 'added' ? undefined : value;
     const rightValue = side === 'added' ? value : undefined;
@@ -33,7 +34,7 @@ const mapChildrenForSide = (val, side) => {
       children: mapChildrenForSide(value, side),
       ...getContainerProps(value)
     } : {};
-    return createNode(key, TYPE.UNCHANGED, leftValue, rightValue, childExtra);
+    return createNode(key, type, leftValue, rightValue, childExtra);
   };
 
   if (Array.isArray(val)) {

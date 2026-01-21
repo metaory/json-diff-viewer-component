@@ -20,24 +20,26 @@ const themes = {
   }
 }
 
+const themeLabels = { dark: "Light", light: "Dark" };
+
 const applyTheme = (theme) => {
-  const tokens = themes[theme];
-  for (const [key, value] of Object.entries(tokens)) {
+  Object.entries(themes[theme]).forEach(([key, value]) => {
     viewer.style.setProperty(`--${key}`, value);
-  }
-  toggle.textContent = theme === "dark" ? "Light" : "Dark";
+  });
+  toggle.textContent = themeLabels[theme];
   document.documentElement.setAttribute("data-theme", theme);
   localStorage.setItem("json-diff-viewer-theme", theme);
 };
 
-const getTheme = () => localStorage.getItem("json-diff-viewer-theme") || "dark"
-applyTheme(getTheme())
+const getTheme = () => localStorage.getItem("json-diff-viewer-theme") || "dark";
+
+const toggleTheme = (current) => current === "dark" ? "light" : "dark";
+
+applyTheme(getTheme());
 
 toggle.addEventListener("click", () => {
-  const current = getTheme()
-  const next = current === "dark" ? "light" : "dark"
-  applyTheme(next)
-})
+  applyTheme(toggleTheme(getTheme()));
+});
 
 Promise.all([
   fetch(`${import.meta.env.BASE_URL}data/a1.json`).then((r) => r.json()),

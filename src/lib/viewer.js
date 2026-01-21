@@ -64,7 +64,7 @@ class JsonDiffViewer extends HTMLElement {
     },
   });
   #stats = {};
-  #showOnlyChanged = false;
+  #showOnlyChanged = true;
 
   static observedAttributes = ["left", "right"];
   constructor() {
@@ -139,6 +139,8 @@ class JsonDiffViewer extends HTMLElement {
       this.shadowRoot.innerHTML = `<style>${styles}</style><div class="empty">Provide left and right JSON</div>`;
       return;
     }
+    const panel = this.shadowRoot.querySelector('.panel');
+    const scroll = { top: panel?.scrollTop || 0, left: panel?.scrollLeft || 0 };
     this.shadowRoot.innerHTML = `
       <style>${styles}</style>
       <div class="stats">
@@ -163,6 +165,10 @@ class JsonDiffViewer extends HTMLElement {
           .join("")}
       </div>`;
     this.#bind();
+    this.shadowRoot.querySelectorAll('.panel').forEach(p => {
+      p.scrollTop = scroll.top;
+      p.scrollLeft = scroll.left;
+    });
   }
 
   #renderNode(node, side, path, root = true, placeholderParam = false) {
@@ -173,10 +179,11 @@ class JsonDiffViewer extends HTMLElement {
     const hidden = placeholder ? ' style="visibility: hidden;"' : "";
     const keyHtml = buildKeyHtml(node.key, root, placeholder);
 
-    if (value === undefined) {
-      if (!node.children?.length) {
-        return `<div class="node${rootClass}"><div class="line placeholder">${keyHtml}</div></div>`;
-      }
+    if (value === undefined && !node.children?.length) {
+      const otherValue = side === 'left' ? node.right : node.left;
+      const [val, type] = format(otherValue);
+      const hiddenKey = buildKeyHtml(node.key, root, true);
+      return `<div class="node${rootClass}"><div class="line placeholder">${hiddenKey}<span class="val-${type}" style="visibility: hidden;">${val}</span></div></div>`;
     }
 
     if (value !== undefined && !node.isArray && !node.isObject) {
