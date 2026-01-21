@@ -12,6 +12,44 @@ const format = (val) => {
   return [JSON.stringify(val), "string"];
 };
 
+const buildPath = (path, key) => path ? `${path}.${key}` : String(key);
+
+const filterChildren = (children, showOnlyChanged) =>
+  showOnlyChanged ? children.filter((c) => c.hasDiff) : children;
+
+const isExpanded = (proxy, path) => proxy[path] !== false;
+
+const buildKeyHtml = (key, root, hidden = false) =>
+  root ? "" : `<span class="key"${hidden ? ' style="visibility: hidden;"' : ""}>${key}</span><span class="colon"${hidden ? ' style="visibility: hidden;"' : ""}>:</span>`;
+
+const buildRootClass = (root) => root ? " root" : "";
+
+const getBrackets = (isArray) => isArray ? ["[", "]"] : ["{", "}"];
+
+const collectStats = (tree) => {
+  const stats = Object.fromEntries(STAT_TYPES.map((t) => [t, 0]));
+  const walk = (node, path = "") => {
+    const currentPath = buildPath(path, node.key);
+    if (node.type !== TYPE.UNCHANGED) stats[node.type]++;
+    (node.children || []).forEach((child) => {
+      walk(child, currentPath);
+    });
+  };
+  walk(tree);
+  return stats;
+};
+
+const initializeExpanded = (tree, proxy) => {
+  const walk = (node, path = "") => {
+    const currentPath = buildPath(path, node.key);
+    if ((node.isArray || node.isObject) && !node.hasDiff) proxy[currentPath] = false;
+    (node.children || []).forEach((child) => {
+      walk(child, currentPath);
+    });
+  };
+  walk(tree);
+};
+
 class JsonDiffViewer extends HTMLElement {
   #left = null;
   #right = null;
@@ -64,43 +102,43 @@ class JsonDiffViewer extends HTMLElement {
   #compute() {
     if (!this.#left || !this.#right) return;
     this.#tree = diff(this.#left, this.#right);
-    this.#stats = Object.fromEntries(STAT_TYPES.map((t) => [t, 0]));
-    this.#walk(this.#tree, (n) => {
-      if (n.type !== TYPE.UNCHANGED) this.#stats[n.type]++;
+    this.#stats = collectStats(this.#tree);
+    Object.keys(this.#exp).forEach((k) => {
+      delete this.#exp[k];
     });
-    for (const k of Object.keys(this.#exp)) delete this.#exp[k];
-    this.#walk(this.#tree, (n, p) => {
-      if ((n.isArray || n.isObject) && !n.hasDiff) this.#exp[p] = false;
-    });
+    initializeExpanded(this.#tree, this.#exp);
     this.#render();
-  }
-
-  #walk(node, fn, path = "") {
-    const currentPath = path ? `${path}.${node.key}` : String(node.key);
-    fn(node, currentPath);
-    for (const child of node.children || []) this.#walk(child, fn, currentPath);
   }
 
   #collapseAll() {
     if (!this.#tree) return;
     this.#rendering = true;
-    this.#walk(this.#tree, (n, p) => {
-      if (n.isArray || n.isObject) this.#proxy[p] = false;
-    });
+    const walk = (node, path = "") => {
+      const currentPath = buildPath(path, node.key);
+      if (node.isArray || node.isObject) this.#proxy[currentPath] = false;
+      (node.children || []).forEach((child) => {
+        walk(child, currentPath);
+      });
+    };
+    walk(this.#tree);
     this.#rendering = false;
     this.#render();
   }
 
   #expandAll() {
     this.#rendering = true;
-    for (const k of Object.keys(this.#exp)) delete this.#exp[k];
+    Object.keys(this.#exp).forEach((k) => {
+      delete this.#exp[k];
+    });
     this.#rendering = false;
     this.#render();
   }
 
   #render() {
-    if (!this.#tree)
-      return (this.shadowRoot.innerHTML = `<style>${styles}</style><div class="empty">Provide left and right JSON</div>`);
+    if (!this.#tree) {
+      this.shadowRoot.innerHTML = `<style>${styles}</style><div class="empty">Provide left and right JSON</div>`;
+      return;
+    }
     this.shadowRoot.innerHTML = `
       <style>${styles}</style>
       <div class="stats">
@@ -108,12 +146,10 @@ class JsonDiffViewer extends HTMLElement {
           ${STAT_TYPES.map((t) => `<div class="stat stat-${t}"><span class="dot"></span>${this.#stats[t]} ${t.replace("_", " ")}</div>`).join("")}
         </div>
         <div class="stats-buttons">
-          <button class="btn-filter" data-action="filter" aria-label="Show only changed" title="Show only changed">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="checkbox-icon ${this.#showOnlyChanged ? "checked" : ""}">
-              <path fill="currentColor" d="M4.25 12a7.75 7.75 0 1 1 15.5 0a7.75 7.75 0 0 1-15.5 0" opacity="0.5" />
-              <path fill="currentColor" d="M8.25 12a3.75 3.75 0 1 0 7.5 0a3.75 3.75 0 0 0-7.5 0" />
-            </svg>
-          </button>
+          <label class="switch" aria-label="Show only changed" title="Show only changed">
+            <input type="checkbox" class="checkbox" data-action="filter" ${this.#showOnlyChanged ? "checked" : ""}>
+            <div class="slider"></div>
+          </label>
           <button class="btn-collapse" data-action="collapse" title="Collapse all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M9 15H6q-.425 0-.712-.288T5 14t.288-.712T6 13h4q.425 0 .713.288T11 14v4q0 .425-.288.713T10 19t-.712-.288T9 18zm6-6h3q.425 0 .713.288T19 10t-.288.713T18 11h-4q-.425 0-.712-.288T13 10V6q0-.425.288-.712T14 5t.713.288T15 6z"/></svg></button>
           <button class="btn-expand" data-action="expand" title="Expand all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7 17h3q.425 0 .713.288T11 18t-.288.713T10 19H6q-.425 0-.712-.288T5 18v-4q0-.425.288-.712T6 13t.713.288T7 14zM17 7h-3q-.425 0-.712-.288T13 6t.288-.712T14 5h4q.425 0 .713.288T19 6v4q0 .425-.288.713T18 11t-.712-.288T17 10z"/></svg></button>
         </div>
@@ -122,120 +158,108 @@ class JsonDiffViewer extends HTMLElement {
         ${["left", "right"]
           .map((side) => {
             const label = side === "left" ? "Original" : "Modified";
-            return `<div class="panel" data-side="${side}"><div class="header">${label}</div>${this.#node(this.#tree, side, "")}</div>`;
+            return `<div class="panel" data-side="${side}"><div class="header">${label}</div>${this.#renderNode(this.#tree, side, "")}</div>`;
           })
           .join("")}
       </div>`;
     this.#bind();
   }
 
-  #placeholder(node, side, path, root = true) {
-    const currentPath = path ? `${path}.${node.key}` : String(node.key);
+  #renderNode(node, side, path, root = true, placeholderParam = false) {
+    const currentPath = buildPath(path, node.key);
     const value = node[side];
-    const keyHtml = root ? "" : `<span class="key" style="visibility: hidden;">${node.key}</span><span class="colon" style="visibility: hidden;">:</span>`;
-    const rootClass = root ? " root" : "";
-
-    if (!node.isArray && !node.isObject) {
-      if (value === undefined) {
-        return `<div class="node${rootClass}"><div class="line placeholder"><span class="tog"></span>${keyHtml}</div></div>`;
-      }
-      const [val, type] = format(value);
-      return `<div class="node${rootClass}"><div class="line placeholder"><span class="tog"></span>${keyHtml}<span class="val-${type}" style="visibility: hidden;">${val}</span></div></div>`;
-    }
-
-    const [open, close] = node.isArray ? ["[", "]"] : ["{", "}"];
-    const children = node.children || [];
-    const isExpanded = this.#proxy[currentPath] !== false;
-    const filteredChildren = this.#showOnlyChanged
-      ? children.filter((c) => c.hasDiff)
-      : children;
-    const childrenHtml = isExpanded
-      ? filteredChildren.map((c) => this.#placeholder(c, side, currentPath, false)).join("")
-      : "";
-    const preview = `${filteredChildren.length}`;
-
-    if (!isExpanded) {
-      return `<div class="node${rootClass}"><div class="line placeholder"><span class="tog">▶</span>${keyHtml}<span class="br" style="visibility: hidden;">${open}</span><span class="preview" style="visibility: hidden;">${preview}</span><span class="br" style="visibility: hidden;">${close}</span></div></div>`;
-    }
-
-    return `<div class="node${rootClass}"><div class="line placeholder"><span class="tog">▼</span>${keyHtml}<span class="br" style="visibility: hidden;">${open}</span></div>${childrenHtml}<div class="line placeholder"><span class="tog"></span><span class="br" style="visibility: hidden;">${close}</span></div></div>`;
-  }
-
-  #node(node, side, path, root = true) {
-    const currentPath = path ? `${path}.${node.key}` : String(node.key);
-    const value = node[side];
-    const hasDiff = node.hasDiff && node.type !== TYPE.UNCHANGED;
-    const diffClass = hasDiff ? `diff-${node.type}` : "";
-    const hasChildDiff = node.hasDiff && node.children?.some((c) => c.hasDiff);
-    const dotType = node.type === TYPE.UNCHANGED ? "modified" : node.type;
-    const dot = hasChildDiff ? `<span class="dot dot-${dotType}"></span>` : "";
-    const keyHtml = root
-      ? ""
-      : `<span class="key">${node.key}</span><span class="colon">:</span>`;
-    const rootClass = root ? " root" : "";
-    const nodeDiffClass = hasDiff && !hasChildDiff ? ` ${diffClass}` : "";
+    const rootClass = buildRootClass(root);
+    const placeholder = value === undefined && node.children?.length ? true : placeholderParam;
+    const hidden = placeholder ? ' style="visibility: hidden;"' : "";
+    const keyHtml = buildKeyHtml(node.key, root, placeholder);
 
     if (value === undefined) {
-      if (node.children?.length) {
-        return this.#placeholder(node, side, path, root);
+      if (!node.children?.length) {
+        return `<div class="node${rootClass}"><div class="line placeholder">${keyHtml}</div></div>`;
       }
-      return `<div class="node${rootClass}"><div class="line placeholder"><span class="tog"></span>${root ? "" : `<span class="key" style="visibility: hidden;">${node.key}</span><span class="colon" style="visibility: hidden;">:</span>`}</div></div>`;
     }
 
-    if (!node.isArray && !node.isObject) {
+    if (value !== undefined && !node.isArray && !node.isObject) {
       const [val, type] = format(value);
-      return `<div class="node${rootClass}${nodeDiffClass}"><div class="line"><span class="tog"></span>${dot}${keyHtml}<span class="val-${type}">${val}</span></div></div>`;
+      if (placeholder) {
+        return `<div class="node${rootClass}"><div class="line placeholder">${keyHtml}<span class="val-${type}"${hidden}>${val}</span></div></div>`;
+      }
+      const hasDiff = node.hasDiff && node.type !== TYPE.UNCHANGED;
+      const diffClass = hasDiff ? `diff-${node.type}` : "";
+      const nodeDiffClass = hasDiff ? ` ${diffClass}` : "";
+      return `<div class="node${rootClass}${nodeDiffClass}"><div class="line"><span class="tog"></span>${keyHtml}<span class="val-${type}">${val}</span></div></div>`;
     }
 
-    const [open, close] = node.isArray ? ["[", "]"] : ["{", "}"];
-    const isExpanded = this.#proxy[currentPath] !== false;
-    const filteredChildren = this.#showOnlyChanged
-      ? node.children?.filter((c) => c.hasDiff) || []
-      : node.children || [];
-    const childrenHtml = filteredChildren.map((c) => this.#node(c, side, currentPath, false)).join("");
-    const preview = `${filteredChildren.length}`;
+    const [open, close] = getBrackets(node.isArray);
+    const expanded = isExpanded(this.#proxy, currentPath);
+    const children = node.children || [];
+    const filtered = filterChildren(children, this.#showOnlyChanged);
+    const childrenHtml = expanded
+      ? filtered.map((c) => this.#renderNode(c, side, currentPath, false, placeholder)).join("")
+      : "";
+    const preview = `${filtered.length}`;
 
-    if (!isExpanded) {
-      return `<div class="node${rootClass}${nodeDiffClass}"><div class="line" data-p="${currentPath}"><span class="tog">▶</span>${dot}${keyHtml}<span class="br">${open}</span><span class="preview">${preview}</span><span class="br">${close}</span></div></div>`;
+    if (placeholder) {
+      if (!expanded) {
+        return `<div class="node${rootClass}"><div class="line placeholder">${keyHtml}<span class="br"${hidden}>${open}</span><span class="preview"${hidden}>${preview}</span><span class="br"${hidden}>${close}</span></div></div>`;
+      }
+      return `<div class="node${rootClass}"><div class="line placeholder">${keyHtml}<span class="br"${hidden}>${open}</span></div>${childrenHtml}<div class="line placeholder"><span class="br"${hidden}>${close}</span></div></div>`;
     }
 
-    return `<div class="node${rootClass}${nodeDiffClass}"><div class="line" data-p="${currentPath}"><span class="tog">▼</span>${dot}${keyHtml}<span class="br">${open}</span></div>${childrenHtml}<div class="line"><span class="tog"></span><span class="br">${close}</span></div></div>`;
+    const hasDiff = node.hasDiff && node.type !== TYPE.UNCHANGED;
+    const diffClass = hasDiff ? `diff-${node.type}` : "";
+    const hasChildDiff = node.hasDiff && children.some((c) => c.hasDiff);
+    const dotType = node.type === TYPE.UNCHANGED ? "modified" : node.type;
+    const dot = hasChildDiff ? `<span class="dot dot-${dotType}"></span>` : "";
+    const nodeDiffClass = hasDiff && !hasChildDiff ? ` ${diffClass}` : "";
+    const toggle = expanded ? "▼" : "▶";
+    const dataPath = ` data-p="${currentPath}"`;
+
+    if (!expanded) {
+      return `<div class="node${rootClass}${nodeDiffClass}"><div class="line"${dataPath}><span class="tog">${toggle}</span>${dot}${keyHtml}<span class="br">${open}</span><span class="preview">${preview}</span><span class="br">${close}</span></div></div>`;
+    }
+
+    return `<div class="node${rootClass}${nodeDiffClass}"><div class="line"${dataPath}><span class="tog">${toggle}</span>${dot}${keyHtml}<span class="br">${open}</span></div>${childrenHtml}<div class="line"><span class="tog"></span><span class="br">${close}</span></div></div>`;
   }
 
   #bind() {
     const [leftPanel, rightPanel] = this.shadowRoot.querySelectorAll(".panel");
-    let syncing = false;
+    const syncing = { value: false };
 
     const syncScroll = (source) => () => {
-      if (syncing) return;
-      syncing = true;
+      if (syncing.value) return;
+      syncing.value = true;
       const target = source === leftPanel ? rightPanel : leftPanel;
       target.scrollTop = source.scrollTop;
       target.scrollLeft = source.scrollLeft;
-      syncing = false;
+      syncing.value = false;
     };
 
     leftPanel?.addEventListener("scroll", syncScroll(leftPanel));
     rightPanel?.addEventListener("scroll", syncScroll(rightPanel));
 
-    for (const el of this.shadowRoot.querySelectorAll("[data-p]")) {
+    Array.from(this.shadowRoot.querySelectorAll("[data-p]")).forEach((el) => {
       el.onclick = () => {
         this.#proxy[el.dataset.p] = this.#proxy[el.dataset.p] === false;
       };
-    }
+    });
 
-    this.shadowRoot
-      .querySelector('[data-action="filter"]')
-      ?.addEventListener("click", () => {
-        this.#showOnlyChanged = !this.#showOnlyChanged;
+    const filterCheckbox = this.shadowRoot.querySelector(`[data-action="filter"]`);
+    if (filterCheckbox) {
+      filterCheckbox.addEventListener("change", (e) => {
+        this.#showOnlyChanged = e.target.checked;
         this.#render();
       });
-    this.shadowRoot
-      .querySelector('[data-action="collapse"]')
-      ?.addEventListener("click", () => this.#collapseAll());
-    this.shadowRoot
-      .querySelector('[data-action="expand"]')
-      ?.addEventListener("click", () => this.#expandAll());
+    }
+
+    const actions = {
+      collapse: () => this.#collapseAll(),
+      expand: () => this.#expandAll(),
+    };
+
+    Object.entries(actions).forEach(([action, handler]) => {
+      this.shadowRoot.querySelector(`[data-action="${action}"]`)?.addEventListener("click", handler);
+    });
   }
 }
 

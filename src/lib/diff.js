@@ -1,4 +1,4 @@
-const TYPE = { UNCHANGED: 'unchanged', ADDED: 'added', REMOVED: 'removed', MODIFIED: 'modified' }
+const TYPE = { UNCHANGED: 'unchanged', ADDED: 'added', REMOVED: 'removed', MODIFIED: 'modified' };
 
 const typeOf = (v) => {
   if (v === null) return 'null';
@@ -8,9 +8,9 @@ const typeOf = (v) => {
 
 const isObj = (v) => v !== null && typeof v === 'object';
 
-const keys = (a, b) => [...new Set([...Object.keys(a || {}), ...Object.keys(b || {})])];
+const allKeys = (a, b) => [...new Set([...Object.keys(a || {}), ...Object.keys(b || {})])];
 
-const node = (key, type, left, right, extra = {}) => ({
+const createNode = (key, type, left, right, extra = {}) => ({
   key,
   type,
   left,
@@ -19,50 +19,68 @@ const node = (key, type, left, right, extra = {}) => ({
   ...extra
 });
 
-const container = (val, isArr) => {
-  if (isArr) return { isArray: true };
+const getContainerProps = (val) => {
+  if (Array.isArray(val)) return { isArray: true };
   if (isObj(val)) return { isObject: true };
   return {};
 };
 
-const childMap = (val, side) => (v, k) => node(
-  k, TYPE.UNCHANGED,
-  side === 'added' ? undefined : v,
-  side === 'added' ? v : undefined,
-  isObj(v) && { children: mapChildren(v, side), ...container(v, Array.isArray(v)) }
-)
+const mapChildrenForSide = (val, side) => {
+  const createChildNode = (value, key) => {
+    const leftValue = side === 'added' ? undefined : value;
+    const rightValue = side === 'added' ? value : undefined;
+    const childExtra = isObj(value) ? {
+      children: mapChildrenForSide(value, side),
+      ...getContainerProps(value)
+    } : {};
+    return createNode(key, TYPE.UNCHANGED, leftValue, rightValue, childExtra);
+  };
 
-const mapChildren = (val, side) => {
-  if (Array.isArray(val)) return val.map(childMap(val, side));
-  if (isObj(val)) return Object.entries(val).map(([k, v]) => childMap(val, side)(v, k));
+  if (Array.isArray(val)) {
+    return val.map((item, index) => createChildNode(item, index));
+  }
+  if (isObj(val)) {
+    return Object.entries(val).map(([k, v]) => createChildNode(v, k));
+  }
   return [];
 };
 
 const diffContainer = (left, right, key, isArr) => {
   const items = isArr
     ? Array.from({ length: Math.max(left?.length || 0, right?.length || 0) }, (_, i) => diff(left?.[i], right?.[i], i))
-    : keys(left, right).map(k => diff(left?.[k], right?.[k], k))
-  const hasDiff = items.some(c => c.hasDiff)
-  return node(key, hasDiff ? TYPE.MODIFIED : TYPE.UNCHANGED, left, right, { children: items, ...container(left, isArr) })
-}
+    : allKeys(left, right).map(k => diff(left?.[k], right?.[k], k));
+  const hasDiff = items.some(c => c.hasDiff);
+  return createNode(key, hasDiff ? TYPE.MODIFIED : TYPE.UNCHANGED, left, right, {
+    children: items,
+    ...getContainerProps(left)
+  });
+};
 
 const diff = (left, right, key = 'root') => {
   if (left === undefined) {
-    const extra = isObj(right) ? { children: mapChildren(right, 'added'), ...container(right, Array.isArray(right)) } : {};
-    return node(key, TYPE.ADDED, left, right, extra);
+    const extra = isObj(right) ? {
+      children: mapChildrenForSide(right, 'added'),
+      ...getContainerProps(right)
+    } : {};
+    return createNode(key, TYPE.ADDED, left, right, extra);
   }
   if (right === undefined) {
-    const extra = isObj(left) ? { children: mapChildren(left, 'removed'), ...container(left, Array.isArray(left)) } : {};
-    return node(key, TYPE.REMOVED, left, right, extra);
+    const extra = isObj(left) ? {
+      children: mapChildrenForSide(left, 'removed'),
+      ...getContainerProps(left)
+    } : {};
+    return createNode(key, TYPE.REMOVED, left, right, extra);
   }
   if (!isObj(left) && !isObj(right)) {
-    if (left === right) return node(key, TYPE.UNCHANGED, left, right);
-    return node(key, TYPE.MODIFIED, left, right);
+    return createNode(key, left === right ? TYPE.UNCHANGED : TYPE.MODIFIED, left, right);
   }
   if (typeOf(left) !== typeOf(right)) {
-    return node(key, TYPE.MODIFIED, left, right, { children: [], ...container(left, Array.isArray(left)) });
+    return createNode(key, TYPE.MODIFIED, left, right, {
+      children: [],
+      ...getContainerProps(left)
+    });
   }
   return diffContainer(left, right, key, Array.isArray(left));
 };
 
-export { diff, TYPE }
+export { diff, TYPE };

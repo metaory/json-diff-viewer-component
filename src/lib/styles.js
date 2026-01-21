@@ -4,6 +4,7 @@ export default `
   --bg: #18181b; --bg2: #27272a; --bdr: #3f3f46;
   --txt: #fafafa; --dim: #a1a1aa;
   --key: #38bdf8; --str: #a78bfa; --num: #34d399; --bool: #fb923c; --nul: #f472b6; --br: #71717a;
+  --slider: var(--mod);
   display: flex; flex-direction: column; font: 13px 'JetBrains Mono', 'Fira Code', monospace;
   background: var(--bg); color: var(--txt); border-radius: 12px; overflow: hidden;
 }
@@ -43,12 +44,17 @@ export default `
 .preview::after { content: ' items'; }
 .stats { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 1rem; padding: .75rem 1rem; background: var(--bg); border-bottom: 2px solid var(--bdr); font-size: 12px; }
 .stats-items { display: grid; grid-auto-flow: column; gap: 2rem; justify-content: start; }
-.stats-buttons { display: flex; gap: 0.5rem; }
-.btn-filter, .btn-collapse, .btn-expand { padding: 0.5rem; background: var(--bg2); border: 1px solid var(--bdr); border-radius: 10px; color: var(--txt); cursor: pointer; transition: background .15s, border-color .15s; display: flex; align-items: center; justify-content: center; }
-.btn-filter svg, .btn-collapse svg, .btn-expand svg { width: 18px; height: 18px; }
-.btn-filter:hover, .btn-collapse:hover, .btn-expand:hover { background: rgba(0,0,0,.05); box-shadow: 0 0 4px var(--bdr); }
-.btn-filter .checkbox-icon { opacity: 0.3; transition: opacity .15s; }
-.btn-filter .checkbox-icon.checked { opacity: 1; }
+.stats-buttons { display: flex; gap: 0.5rem; align-items: center; }
+.switch { display: inline-block; cursor: pointer; }
+.checkbox { display: none; }
+.slider { width: 48px; height: 24px; background-color: var(--bdr); border-radius: 16px; overflow: hidden; display: flex; align-items: center; border: 3px solid transparent; transition: .3s; box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25) inset; cursor: pointer; }
+.slider::before { content: ''; display: block; width: 100%; height: 100%; background-color: var(--txt); transform: translateX(-24px); border-radius: 16px; transition: .3s; box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.25); }
+.checkbox:checked ~ .slider::before { transform: translateX(24px); box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.25); }
+.checkbox:checked ~ .slider { background-color: var(--slider); }
+.checkbox:active ~ .slider::before { transform: translate(0); }
+.btn-collapse, .btn-expand { padding: 0.5rem; background: var(--bg2); border: 1px solid var(--bdr); border-radius: 10px; color: var(--txt); cursor: pointer; transition: background .15s, border-color .15s; display: flex; align-items: center; justify-content: center; }
+.btn-collapse svg, .btn-expand svg { width: 18px; height: 18px; }
+.btn-collapse:hover, .btn-expand:hover { background: rgba(0,0,0,.05); box-shadow: 0 0 4px var(--bdr); }
 .stat { display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: .35rem; }
 .stat .dot { width: 8px; height: 8px; }
 .stat-added .dot { background: var(--add); }
