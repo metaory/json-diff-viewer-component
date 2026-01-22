@@ -8,8 +8,6 @@
         A zero-dependency web component for visualizing JSON differences
         <br>
         with synchronized scrolling, collapsible nodes, and syntax highlighting
-        <br>
-        Perfect for debugging, API comparisons, and configuration diffs
     </p>
     <img src="https://raw.githubusercontent.com/metaory/json-diff-viewer-component/refs/heads/master/public/screenshot.png" alt="demo" width="80%" />
     <h5>
