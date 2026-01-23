@@ -9,10 +9,11 @@
         <br>
         with synchronized scrolling, collapsible nodes, and syntax highlighting
     </p>
-    <img src="https://raw.githubusercontent.com/metaory/json-diff-viewer-component/refs/heads/master/public/screenshot.png" alt="demo" width="80%" />
     <h5>
         <a href="https://metaory.github.io/json-diff-viewer-component/" target="_blank">metaory.github.io/json-diff-viewer-component</a>
     </h5>
+    <img src="https://raw.githubusercontent.com/metaory/json-diff-viewer-component/refs/heads/master/public/screenshot.jpg" alt="demo" width="80%" />
+    <img src="https://raw.githubusercontent.com/metaory/json-diff-viewer-component/refs/heads/master/public/screenshot-light.jpg" alt="demo-light" width="80%" />
 </div>
 
 ## Features

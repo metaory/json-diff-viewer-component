@@ -11,6 +11,7 @@
     "logging": {
       "level": "warn",
       "format": "json",
+      "color": true,
       "outputs": ["console", "file"],
       "rotation": {
         "enabled": true,
