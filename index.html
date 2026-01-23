@@ -1,21 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
   <title>JSON Diff Viewer</title>
 </head>
+
 <body>
   <div id="app">
-    <h1>JSON Diff Viewer
-      <div class="header-controls">
-        <button id="theme-toggle">Light</button>
-        <a href="https://github.com/metaory/json-diff-viewer-component" target="_blank" rel="noopener noreferrer"><img src="/github.svg" alt="GitHub" class="github-logo"></a>
+    <header>
+      <h1>JSON Diff Viewer
+        <div class="header-controls">
+          <a id="docs-link" href="https://github.com/metaory/json-diff-viewer-component#usage" target="_blank"
+            rel="noopener noreferrer">Library</a>
+          <button id="load-toggle">Load Data</button>
+          <button id="theme-toggle">Light</button>
+          <a href="https://github.com/metaory/json-diff-viewer-component" target="_blank" rel="noopener noreferrer"><img
+              src="/github.svg" alt="GitHub" class="github-logo"></a>
+        </div>
+      </h1>
+      <p class="tagline">Framework Agnostic Web Component</p>
+    </header>
+    <section id="input-panel" class="collapsed" data-mode="file">
+      <nav class="input-tabs">
+        <button class="tab active" data-mode="file">File</button>
+        <button class="tab" data-mode="paste">Paste</button>
+        <button class="tab" data-mode="url">URL</button>
+      </nav>
+      <div class="input-grid">
+        <div class="input-col">
+          <label>Left</label>
+          <input type="file" accept=".json" data-side="left" hidden>
+          <button type="button" class="file-btn" data-side="left">Choose file...</button>
+          <textarea placeholder="Paste JSON..." data-side="left"></textarea>
+          <input type="url" placeholder="https://..." data-side="left">
+        </div>
+        <div class="input-col">
+          <label>Right</label>
+          <input type="file" accept=".json" data-side="right" hidden>
+          <button type="button" class="file-btn" data-side="right">Choose file...</button>
+          <textarea placeholder="Paste JSON..." data-side="right"></textarea>
+          <input type="url" placeholder="https://..." data-side="right">
+        </div>
       </div>
-    </h1>
+      <button id="compare-btn">Compare</button>
+    </section>
     <json-diff-viewer></json-diff-viewer>
   </div>
   <script type="module" src="/src/main.js"></script>
 </body>
+
 </html>
