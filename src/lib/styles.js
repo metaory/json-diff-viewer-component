@@ -47,7 +47,7 @@ export default `
 .switch { display: inline-block; cursor: pointer; }
 .checkbox { display: none; }
 .slider { width: 48px; height: 24px; background-color: var(--bdr); border-radius: 16px; overflow: hidden; display: flex; align-items: center; border: 3px solid transparent; transition: .3s; box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25) inset; cursor: pointer; }
-.slider::before { content: ''; display: block; width: 100%; height: 100%; background-color: var(--txt); transform: translateX(-24px); border-radius: 16px; transition: .3s; box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.25); }
+.slider::before { content: ''; display: block; width: 100%; height: 100%; background-color: var(--br); transform: translateX(-24px); border-radius: 16px; transition: .3s; box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.25); }
 .checkbox:checked ~ .slider::before { transform: translateX(24px); box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.25); }
 .checkbox:checked ~ .slider { background-color: var(--slider); }
 .checkbox:active ~ .slider::before { transform: translate(0); }

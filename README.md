@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="https://raw.githubusercontent.com/metaory/json-diff-viewer-component/refs/heads/master/public/logo.svg" alt="logo" height="128" />
+    <img src="https://raw.githubusercontent.com/metaory/json-diff-viewer-component/master/public/logo.svg" alt="logo" height="128" />
     <h2>json-diff-viewer</h2>
     <h5>
         Compare JSON side-by-side, visually
@@ -12,8 +12,8 @@
     <h5>
         <a href="https://metaory.github.io/json-diff-viewer-component/" target="_blank">metaory.github.io/json-diff-viewer-component</a>
     </h5>
-    <img src="https://raw.githubusercontent.com/metaory/json-diff-viewer-component/refs/heads/master/public/screenshot.jpg" alt="demo" width="80%" />
-    <img src="https://raw.githubusercontent.com/metaory/json-diff-viewer-component/refs/heads/master/public/screenshot-light.jpg" alt="demo-light" width="80%" />
+    <img src="https://raw.githubusercontent.com/metaory/json-diff-viewer-component/master/public/screenshot.jpg" alt="demo" width="80%" />
+    <img src="https://raw.githubusercontent.com/metaory/json-diff-viewer-component/master/public/screenshot-light.jpg" alt="demo-light" width="80%" />
 </div>
 
 ## Features

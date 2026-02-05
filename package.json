@@ -3,6 +3,9 @@
   "version": "0.6.0",
   "type": "module",
   "description": "Vanilla JS web component for side-by-side JSON diff visualization",
+  "bugs": "https://github.com/metaory/json-diff-viewer-component/issues",
+  "homepage": "https://metaory.github.io/json-diff-viewer-component/",
+  "repository": "git+https://github.com/metaory/json-diff-viewer-component.git",
   "keywords": [
     "json",
     "diff",
