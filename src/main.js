@@ -18,7 +18,7 @@ const themes = {
   },
   light: {
     add: "#15803d", rem: "#b91c1c", mod: "#ca8a04",
-    bg: "#ffffff", bg2: "#f9fafb", bdr: "#d1d5db",
+    bg: "#f4f4f4", bg2: "#f9fafb", bdr: "#d1d5db",
     txt: "#030712", dim: "#4b5563", slider: "#d1d5db",
     key: "#075985", str: "#6d28d9", num: "#047857", bool: "#b45309", nul: "#a21caf", br: "#6b7280"
   }
