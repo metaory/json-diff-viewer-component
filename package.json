@@ -30,6 +30,6 @@
   },
   "devDependencies": {
     "@fontsource/bungee": "^5.2.7",
-    "vite": "^7.2.4"
+    "vite": "^8.0.16"
   }
 }
