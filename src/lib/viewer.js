@@ -100,7 +100,7 @@ class JsonDiffViewer extends HTMLElement {
   }
 
   #compute() {
-    if (!this.#left || !this.#right) return;
+    if (this.#left == null || this.#right == null) return;
     this.#tree = diff(this.#left, this.#right);
     this.#stats = collectStats(this.#tree);
     Object.keys(this.#exp).forEach((k) => {

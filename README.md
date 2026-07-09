@@ -18,10 +18,10 @@
 
 ## Features
 
-- Deep nested JSON comparison
+- Nested JSON comparison
 - Side-by-side synchronized scrolling
 - Collapsible nodes (synced between panels)
-- Diff indicators bubble up to parent nodes
+- Diff indicators roll up to parent nodes
 - Stats summary (added/removed/modified)
 - Show only changed filter toggle
 - Syntax highlighting
@@ -36,7 +36,7 @@ npm i json-diff-viewer-component
 
 ## Usage
 
-### ES Module
+Import the package to register the `<json-diff-viewer>` custom element, then call `setData()` with both JSON values:
 
 ```js
 import "json-diff-viewer-component";
@@ -45,7 +45,15 @@ const viewer = document.querySelector("json-diff-viewer");
 viewer.setData(leftObj, rightObj);
 ```
 
+For testing or extension, the class is also exported:
+
+```js
+import { JsonDiffViewer } from "json-diff-viewer-component";
+```
+
 ### HTML Attributes
+
+Static JSON can be passed as attributes. Values must be valid JSON strings:
 
 ```html
 <json-diff-viewer
@@ -54,18 +62,28 @@ viewer.setData(leftObj, rightObj);
 ></json-diff-viewer>
 ```
 
+- `JSON.parse` parses attribute values. Invalid JSON throws at parse time.
+- Prefer `setData()` or property setters for dynamic or object data
+
 ### Properties
+
+Set `left` and `right` as JavaScript values. Set both before the viewer draws a diff:
 
 ```js
 viewer.left = { name: "foo" };
 viewer.right = { name: "bar" };
+
+viewer.left;  // read current left value
+viewer.right; // read current right value
 ```
 
-### Method
+### Built-in Controls
 
-```js
-viewer.setData(leftObj, rightObj);
-```
+The component toolbar includes:
+
+- **Show only changed**: filter toggle (default: **on**); hides unchanged nodes
+- **Collapse all** / **Expand all**: bulk expand/collapse
+- **Node toggles**: click any object/array line to expand/collapse (synced across both panels)
 
 <details>
 <summary>Framework Examples</summary>
@@ -131,7 +149,7 @@ watch(
 
 ## Styling
 
-Customize the component by overriding CSS custom properties (design tokens) on the `json-diff-viewer` element. All tokens are defined on `:host` and can be overridden from outside the shadow DOM.
+Override CSS custom properties (design tokens) on `json-diff-viewer`. Tokens live on `:host`; you set them from outside the shadow DOM.
 
 ### Design Tokens
 
@@ -170,21 +188,27 @@ Create your own theme by overriding these tokens. For example, a light theme:
 
 ```css
 json-diff-viewer {
-  --bg: #fafafa;
-  --bg2: #ffffff;
-  --bdr: #e4e4e7;
-  --txt: #18181b;
-  --dim: #71717a;
-  --key: #0284c7;
-  --str: #7c3aed;
-  --num: #059669;
-  /* ... override other tokens as needed */
+  --add: #15803d;
+  --rem: #b91c1c;
+  --mod: #ca8a04;
+  --bg: #f4f4f4;
+  --bg2: #f9fafb;
+  --bdr: #d1d5db;
+  --txt: #030712;
+  --dim: #4b5563;
+  --slider: #d1d5db;
+  --key: #075985;
+  --str: #6d28d9;
+  --num: #047857;
+  --bool: #b45309;
+  --nul: #a21caf;
+  --br: #6b7280;
 }
 ```
 
 ### Sizing
 
-The component requires a defined height to enable scrolling. Without a height, the component will expand to fit all content.
+Set a height to get scrolling. Without one, the viewer grows to fit all content. Default border-radius is `12px`.
 
 ```css
 json-diff-viewer {

@@ -46,6 +46,7 @@ toggle.addEventListener("click", () => {
 });
 
 const uncheckFilter = () => {
+  // Default filter is "show only changed". Disable for full sample view.
   const checkbox = viewer.shadowRoot?.querySelector('[data-action="filter"]');
   if (!checkbox?.checked) return;
   checkbox.checked = false;
