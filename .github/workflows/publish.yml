@@ -1,0 +1,59 @@
+name: Publish to npm
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm pack --dry-run
+
+  release:
+    if: github.event_name == 'push'
+    needs: validate
+    runs-on: ubuntu-latest
+    concurrency:
+      group: npm-release
+      cancel-in-progress: false
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: master
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - run: npm ci
+      - run: npm install --global npm@latest
+      - run: npm run build
+
+      - name: Bump patch version
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          npm version patch -m "release: v%s"
+
+      - run: npm publish
+      - run: git push --follow-tags
