@@ -2,6 +2,8 @@ import { diff, TYPE } from "./diff.js";
 import styles from "./styles.js";
 
 const STAT_TYPES = ["added", "removed", "modified"];
+const ENTITIES = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (char) => ENTITIES[char]);
 
 const format = (val) => {
   if (val === null) return ["null", "null"];
@@ -20,7 +22,7 @@ const filterChildren = (children, showOnlyChanged) =>
 const isExpanded = (proxy, path) => proxy[path] !== false;
 
 const buildKeyHtml = (key, root, hidden = false) =>
-  root ? "" : `<span class="key"${hidden ? ' style="visibility: hidden;"' : ""}>${key}</span><span class="colon"${hidden ? ' style="visibility: hidden;"' : ""}>:</span>`;
+  root ? "" : `<span class="key"${hidden ? ' style="visibility: hidden;"' : ""}>${escapeHtml(key)}</span><span class="colon"${hidden ? ' style="visibility: hidden;"' : ""}>:</span>`;
 
 const buildRootClass = (root) => root ? " root" : "";
 
@@ -182,18 +184,18 @@ class JsonDiffViewer extends HTMLElement {
       const otherValue = side === 'left' ? node.right : node.left;
       const [val, type] = format(otherValue);
       const hiddenKey = buildKeyHtml(node.key, root, true);
-      return `<div class="node${rootClass}"><div class="line placeholder">${hiddenKey}<span class="val-${type}" style="visibility: hidden;">${val}</span></div></div>`;
+      return `<div class="node${rootClass}"><div class="line placeholder">${hiddenKey}<span class="val-${type}" style="visibility: hidden;">${escapeHtml(val)}</span></div></div>`;
     }
 
     if (value !== undefined && !node.isArray && !node.isObject) {
       const [val, type] = format(value);
       if (placeholder) {
-        return `<div class="node${rootClass}"><div class="line placeholder">${keyHtml}<span class="val-${type}"${hidden}>${val}</span></div></div>`;
+        return `<div class="node${rootClass}"><div class="line placeholder">${keyHtml}<span class="val-${type}"${hidden}>${escapeHtml(val)}</span></div></div>`;
       }
       const hasDiff = node.hasDiff && node.type !== TYPE.UNCHANGED;
       const diffClass = hasDiff ? `diff-${node.type}` : "";
       const nodeDiffClass = hasDiff ? ` ${diffClass}` : "";
-      return `<div class="node${rootClass}${nodeDiffClass}"><div class="line"><span class="tog"></span>${keyHtml}<span class="val-${type}">${val}</span></div></div>`;
+      return `<div class="node${rootClass}${nodeDiffClass}"><div class="line"><span class="tog"></span>${keyHtml}<span class="val-${type}">${escapeHtml(val)}</span></div></div>`;
     }
 
     const [open, close] = getBrackets(node.isArray);
@@ -219,7 +221,7 @@ class JsonDiffViewer extends HTMLElement {
     const dot = hasChildDiff ? `<span class="dot dot-${dotType}"></span>` : "";
     const nodeDiffClass = hasDiff && !hasChildDiff ? ` ${diffClass}` : "";
     const toggle = expanded ? "▼" : "▶";
-    const dataPath = ` data-p="${currentPath}"`;
+    const dataPath = ` data-p="${escapeHtml(currentPath)}"`;
 
     if (!expanded) {
       return `<div class="node${rootClass}${nodeDiffClass}"><div class="line"${dataPath}><span class="tog">${toggle}</span>${dot}${keyHtml}<span class="br">${open}</span><span class="preview">${preview}</span><span class="br">${close}</span></div></div>`;
