@@ -22,7 +22,7 @@ const filterChildren = (children, showOnlyChanged) =>
 const isExpanded = (proxy, path) => proxy[path] !== false;
 
 const buildKeyHtml = (key, root, hidden = false) =>
-  root ? "" : `<span class="key"${hidden ? ' style="visibility: hidden;"' : ""}>${escapeHtml(key)}</span><span class="colon"${hidden ? ' style="visibility: hidden;"' : ""}>:</span>`;
+  root ? "" : `<span class="key" part="key"${hidden ? ' style="visibility: hidden;"' : ""}>${escapeHtml(key)}</span><span class="colon" part="separator"${hidden ? ' style="visibility: hidden;"' : ""}>:</span>`;
 
 const buildRootClass = (root) => root ? " root" : "";
 
@@ -138,30 +138,30 @@ class JsonDiffViewer extends HTMLElement {
 
   #render() {
     if (!this.#tree) {
-      this.shadowRoot.innerHTML = `<style>${styles}</style><div class="empty">Provide left and right JSON</div>`;
+      this.shadowRoot.innerHTML = `<style>${styles}</style><div class="empty" part="empty">Provide left and right JSON</div>`;
       return;
     }
     const panel = this.shadowRoot.querySelector('.panel');
     const scroll = { top: panel?.scrollTop || 0, left: panel?.scrollLeft || 0 };
     this.shadowRoot.innerHTML = `
       <style>${styles}</style>
-      <div class="stats">
-        <div class="stats-items">
-          ${STAT_TYPES.map((t) => `<div class="stat stat-${t}"><span class="dot"></span>${this.#stats[t]} ${t.replace("_", " ")}</div>`).join("")}
+      <div class="stats" part="toolbar">
+        <div class="stats-items" part="legend">
+          ${STAT_TYPES.map((t) => `<div class="stat stat-${t}" part="legend-item legend-${t}"><span class="dot" part="marker marker-${t}"></span>${this.#stats[t]} ${t.replace("_", " ")}</div>`).join("")}
         </div>
-        <div class="stats-buttons">
-          <label class="switch" aria-label="Show only changed" title="Show only changed">
+        <div class="stats-buttons" part="actions">
+          <label class="switch" part="filter" aria-label="Show only changed" title="Show only changed">
             <input type="checkbox" class="checkbox" data-action="filter" ${this.#showOnlyChanged ? "checked" : ""}>
-            <div class="slider"></div>
+            <div class="slider" part="filter-track"></div>
           </label>
-          <button class="btn-collapse" data-action="collapse" title="Collapse all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M9 15H6q-.425 0-.712-.288T5 14t.288-.712T6 13h4q.425 0 .713.288T11 14v4q0 .425-.288.713T10 19t-.712-.288T9 18zm6-6h3q.425 0 .713.288T19 10t-.288.713T18 11h-4q-.425 0-.712-.288T13 10V6q0-.425.288-.712T14 5t.713.288T15 6z"/></svg></button>
-          <button class="btn-expand" data-action="expand" title="Expand all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7 17h3q.425 0 .713.288T11 18t-.288.713T10 19H6q-.425 0-.712-.288T5 18v-4q0-.425.288-.712T6 13t.713.288T7 14zM17 7h-3q-.425 0-.712-.288T13 6t.288-.712T14 5h4q.425 0 .713.288T19 6v4q0 .425-.288.713T18 11t-.712-.288T17 10z"/></svg></button>
+          <button class="btn-collapse" part="action-button collapse-button" data-action="collapse" title="Collapse all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M9 15H6q-.425 0-.712-.288T5 14t.288-.712T6 13h4q.425 0 .713.288T11 14v4q0 .425-.288.713T10 19t-.712-.288T9 18zm6-6h3q.425 0 .713.288T19 10t-.288.713T18 11h-4q-.425 0-.712-.288T13 10V6q0-.425.288-.712T14 5t.713.288T15 6z"/></svg></button>
+          <button class="btn-expand" part="action-button expand-button" data-action="expand" title="Expand all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7 17h3q.425 0 .713.288T11 18t-.288.713T10 19H6q-.425 0-.712-.288T5 18v-4q0-.425.288-.712T6 13t.713.288T7 14zM17 7h-3q-.425 0-.712-.288T13 6t.288-.712T14 5h4q.425 0 .713.288T19 6v4q0 .425-.288.713T18 11t-.712-.288T17 10z"/></svg></button>
         </div>
       </div>
-      <div class="container">
+      <div class="container" part="content">
         ${["left", "right"]
           .map((side) => {
-            return `<div class="panel" data-side="${side}">${this.#renderNode(this.#tree, side, "")}</div>`;
+            return `<div class="panel" part="panel panel-${side}" data-side="${side}">${this.#renderNode(this.#tree, side, "")}</div>`;
           })
           .join("")}
       </div>`;
@@ -184,18 +184,18 @@ class JsonDiffViewer extends HTMLElement {
       const otherValue = side === 'left' ? node.right : node.left;
       const [val, type] = format(otherValue);
       const hiddenKey = buildKeyHtml(node.key, root, true);
-      return `<div class="node${rootClass}"><div class="line placeholder">${hiddenKey}<span class="val-${type}" style="visibility: hidden;">${escapeHtml(val)}</span></div></div>`;
+      return `<div class="node${rootClass}" part="node"><div class="line placeholder" part="line">${hiddenKey}<span class="val-${type}" part="value value-${type}" style="visibility: hidden;">${escapeHtml(val)}</span></div></div>`;
     }
 
     if (value !== undefined && !node.isArray && !node.isObject) {
       const [val, type] = format(value);
       if (placeholder) {
-        return `<div class="node${rootClass}"><div class="line placeholder">${keyHtml}<span class="val-${type}"${hidden}>${escapeHtml(val)}</span></div></div>`;
+        return `<div class="node${rootClass}" part="node"><div class="line placeholder" part="line">${keyHtml}<span class="val-${type}" part="value value-${type}"${hidden}>${escapeHtml(val)}</span></div></div>`;
       }
       const hasDiff = node.hasDiff && node.type !== TYPE.UNCHANGED;
       const diffClass = hasDiff ? `diff-${node.type}` : "";
       const nodeDiffClass = hasDiff ? ` ${diffClass}` : "";
-      return `<div class="node${rootClass}${nodeDiffClass}"><div class="line"><span class="tog"></span>${keyHtml}<span class="val-${type}">${escapeHtml(val)}</span></div></div>`;
+      return `<div class="node${rootClass}${nodeDiffClass}" part="node${hasDiff ? ` node-${node.type}` : ""}"><div class="line" part="line"><span class="tog" part="toggle"></span>${keyHtml}<span class="val-${type}" part="value value-${type}">${escapeHtml(val)}</span></div></div>`;
     }
 
     const [open, close] = getBrackets(node.isArray);
@@ -209,25 +209,25 @@ class JsonDiffViewer extends HTMLElement {
 
     if (placeholder) {
       if (!expanded) {
-        return `<div class="node${rootClass}"><div class="line placeholder">${keyHtml}<span class="br"${hidden}>${open}</span><span class="preview"${hidden}>${preview}</span><span class="br"${hidden}>${close}</span></div></div>`;
+        return `<div class="node${rootClass}" part="node"><div class="line placeholder" part="line">${keyHtml}<span class="br" part="bracket"${hidden}>${open}</span><span class="preview" part="preview"${hidden}>${preview}</span><span class="br" part="bracket"${hidden}>${close}</span></div></div>`;
       }
-      return `<div class="node${rootClass}"><div class="line placeholder">${keyHtml}<span class="br"${hidden}>${open}</span></div>${childrenHtml}<div class="line placeholder"><span class="br"${hidden}>${close}</span></div></div>`;
+      return `<div class="node${rootClass}" part="node"><div class="line placeholder" part="line">${keyHtml}<span class="br" part="bracket"${hidden}>${open}</span></div>${childrenHtml}<div class="line placeholder" part="line"><span class="br" part="bracket"${hidden}>${close}</span></div></div>`;
     }
 
     const hasDiff = node.hasDiff && node.type !== TYPE.UNCHANGED;
     const diffClass = hasDiff ? `diff-${node.type}` : "";
     const hasChildDiff = node.hasDiff && children.some((c) => c.hasDiff);
     const dotType = node.type === TYPE.UNCHANGED ? "modified" : node.type;
-    const dot = hasChildDiff ? `<span class="dot dot-${dotType}"></span>` : "";
+    const dot = hasChildDiff ? `<span class="dot dot-${dotType}" part="marker marker-${dotType}"></span>` : "";
     const nodeDiffClass = hasDiff && !hasChildDiff ? ` ${diffClass}` : "";
     const toggle = expanded ? "▼" : "▶";
     const dataPath = ` data-p="${escapeHtml(currentPath)}"`;
 
     if (!expanded) {
-      return `<div class="node${rootClass}${nodeDiffClass}"><div class="line"${dataPath}><span class="tog">${toggle}</span>${dot}${keyHtml}<span class="br">${open}</span><span class="preview">${preview}</span><span class="br">${close}</span></div></div>`;
+      return `<div class="node${rootClass}${nodeDiffClass}" part="node${hasDiff ? ` node-${node.type}` : ""}"><div class="line" part="line"${dataPath}><span class="tog" part="toggle">${toggle}</span>${dot}${keyHtml}<span class="br" part="bracket">${open}</span><span class="preview" part="preview">${preview}</span><span class="br" part="bracket">${close}</span></div></div>`;
     }
 
-    return `<div class="node${rootClass}${nodeDiffClass}"><div class="line"${dataPath}><span class="tog">${toggle}</span>${dot}${keyHtml}<span class="br">${open}</span></div>${childrenHtml}<div class="line"><span class="tog"></span><span class="br">${close}</span></div></div>`;
+    return `<div class="node${rootClass}${nodeDiffClass}" part="node${hasDiff ? ` node-${node.type}` : ""}"><div class="line" part="line"${dataPath}><span class="tog" part="toggle">${toggle}</span>${dot}${keyHtml}<span class="br" part="bracket">${open}</span></div>${childrenHtml}<div class="line" part="line"><span class="tog" part="toggle"></span><span class="br" part="bracket">${close}</span></div></div>`;
   }
 
   #bind() {
