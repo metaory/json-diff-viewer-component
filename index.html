@@ -105,6 +105,73 @@
           border-color: var(--accent);
         }
       }
+      .loader {
+        display: grid;
+        gap: 0.75rem;
+        margin-block-end: 1rem;
+        padding: 1rem;
+        background: var(--surface);
+        border: 2px solid var(--border);
+        border-radius: 1rem;
+        &[hidden] {
+          display: none;
+        }
+      }
+      .loader-tabs,
+      .loader-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .loader-tabs button[aria-selected="true"] {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .loader-inputs {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+      }
+      .loader-side {
+        display: grid;
+        gap: 0.4rem;
+        min-width: 0;
+        & label {
+          color: var(--muted);
+          font-size: 0.75rem;
+          font-weight: 700;
+        }
+        & input,
+        & textarea {
+          width: 100%;
+          min-width: 0;
+          padding: 0.65rem;
+          background: var(--page);
+          border: 2px solid var(--border);
+          border-radius: 0.75rem;
+          color: var(--text);
+          font: inherit;
+          &:focus {
+            border-color: var(--accent);
+            outline: none;
+          }
+        }
+        & textarea {
+          min-height: 8rem;
+          resize: vertical;
+        }
+        & > :is(input, textarea):not([data-active]) {
+          display: none;
+        }
+      }
+      .loader-actions {
+        align-items: center;
+        justify-content: flex-end;
+      }
+      #load-error {
+        margin-inline-end: auto;
+        color: var(--rem, #fb7185);
+        font-size: 0.8rem;
+      }
       json-diff-viewer {
         display: flex;
         height: min(68vh, 760px);
@@ -175,6 +242,12 @@
           align-items: flex-start;
           flex-direction: column;
         }
+        .loader-inputs {
+          grid-template-columns: 1fr;
+        }
+        .loader-tabs {
+          flex-wrap: wrap;
+        }
         json-diff-viewer {
           min-height: 520px;
         }
@@ -199,9 +272,35 @@
             href="https://github.com/metaory/json-diff-viewer-component"
             >GitHub</a
           >
+          <button class="button" id="load-toggle" type="button" aria-expanded="false">Load Data</button>
           <button class="button" id="theme" type="button">Light</button>
         </nav>
       </header>
+      <section class="loader" id="loader" aria-label="Load JSON data" hidden>
+        <nav class="loader-tabs" aria-label="Input type">
+          <button class="button" type="button" data-mode="file" aria-selected="true">File</button>
+          <button class="button" type="button" data-mode="paste" aria-selected="false">Paste</button>
+          <button class="button" type="button" data-mode="url" aria-selected="false">URL</button>
+        </nav>
+        <div class="loader-inputs">
+          <div class="loader-side">
+            <label for="left-file">Left</label>
+            <input id="left-file" type="file" accept="application/json,.json" data-side="left" data-kind="file" data-active />
+            <textarea aria-label="Left JSON" placeholder="Paste left JSON" data-side="left" data-kind="paste"></textarea>
+            <input type="url" aria-label="Left JSON URL" placeholder="https://example.com/left.json" data-side="left" data-kind="url" />
+          </div>
+          <div class="loader-side">
+            <label for="right-file">Right</label>
+            <input id="right-file" type="file" accept="application/json,.json" data-side="right" data-kind="file" data-active />
+            <textarea aria-label="Right JSON" placeholder="Paste right JSON" data-side="right" data-kind="paste"></textarea>
+            <input type="url" aria-label="Right JSON URL" placeholder="https://example.com/right.json" data-side="right" data-kind="url" />
+          </div>
+        </div>
+        <div class="loader-actions">
+          <p id="load-error" role="alert"></p>
+          <button class="button" id="compare" type="button">Compare</button>
+        </div>
+      </section>
       <json-diff-viewer aria-label="JSON comparison"></json-diff-viewer>
       <section class="showcase-section" aria-labelledby="usage-title">
         <div class="section-head">
@@ -281,11 +380,65 @@ viewer.right = right;</code></pre>
       const root = document.documentElement;
       const viewer = document.querySelector("json-diff-viewer");
       const theme = document.querySelector("#theme");
+      const loader = document.querySelector("#loader");
+      const loadToggle = document.querySelector("#load-toggle");
+      const error = document.querySelector("#load-error");
       const urls = ["data/a1.json", "data/a2.json"];
+
+      const input = (side, kind) =>
+        loader.querySelector(`[data-side="${side}"][data-kind="${kind}"]`);
+      const read = {
+        file: (side) => input(side, "file").files[0]?.text(),
+        paste: (side) => Promise.resolve(input(side, "paste").value),
+        url: (side) => {
+          const value = input(side, "url").value;
+          return value && fetch(value).then((response) => {
+            if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+            return response.text();
+          });
+        },
+      };
+      const compare = (mode) =>
+        Promise.all(["left", "right"].map((side) => read[mode](side)))
+          .then((values) => {
+            if (values.some((value) => !value)) throw new Error(`Provide both ${mode} inputs`);
+            return values.map(JSON.parse);
+          })
+          .then((values) => viewer.setData(...values));
 
       Promise.all(
         urls.map((url) => fetch(url).then((response) => response.json())),
       ).then((data) => viewer.setData(...data));
+
+      loadToggle.addEventListener("click", () => {
+        loader.hidden = !loader.hidden;
+        loadToggle.setAttribute("aria-expanded", String(!loader.hidden));
+      });
+
+      loader.querySelector(".loader-tabs").addEventListener("click", (event) => {
+        const mode = event.target.dataset.mode;
+        if (!mode) return;
+        for (const tab of loader.querySelectorAll("[data-mode]")) {
+          tab.setAttribute("aria-selected", String(tab === event.target));
+        }
+        for (const field of loader.querySelectorAll("[data-kind]")) {
+          field.toggleAttribute("data-active", field.dataset.kind === mode);
+        }
+        error.textContent = "";
+      });
+
+      document.querySelector("#compare").addEventListener("click", () => {
+        const mode = loader.querySelector('[aria-selected="true"]').dataset.mode;
+        error.textContent = "";
+        compare(mode)
+          .then(() => {
+            loader.hidden = true;
+            loadToggle.setAttribute("aria-expanded", "false");
+          })
+          .catch((reason) => {
+            error.textContent = reason.message;
+          });
+      });
 
       theme.addEventListener("click", () => {
         const next = root.dataset.theme === "dark" ? "light" : "dark";
