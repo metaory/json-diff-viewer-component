@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="https://raw.githubusercontent.com/metaory/json-diff-viewer-component/master/public/logo.svg" alt="logo" height="128" />
+    <img src="https://raw.githubusercontent.com/metaory/json-diff-viewer-component/master/public/logo.png" alt="logo" height="128" />
     <h2>json-diff-viewer</h2>
     <h5>
         Compare JSON side-by-side, visually
@@ -36,24 +36,50 @@ npm i json-diff-viewer-component
 
 ## Usage
 
-Import the package to register the `<json-diff-viewer>` custom element, then call `setData()` with both JSON values:
+Every integration needs three things:
+
+1. Import the package once to register the custom element.
+2. Add `<json-diff-viewer>` to the page.
+3. Provide both values using one of the data APIs below.
+
+Import the package:
 
 ```js
 import "json-diff-viewer-component";
-
-const viewer = document.querySelector("json-diff-viewer");
-viewer.setData(leftObj, rightObj);
 ```
 
-For testing or extension, the class is also exported:
+```html
+<json-diff-viewer></json-diff-viewer>
+```
+
+Choose one data API. Root values must be non-null.
+
+### `setData(left, right)` (Recommended)
+
+Use for dynamic data. Both values update in one render:
 
 ```js
-import { JsonDiffViewer } from "json-diff-viewer-component";
+const viewer = document.querySelector("json-diff-viewer");
+viewer.setData(
+  { name: "foo", enabled: true },
+  { name: "bar", enabled: true },
+);
 ```
 
-### HTML Attributes
+### Properties (Alternative)
 
-Static JSON can be passed as attributes. Values must be valid JSON strings:
+Use when assigning JavaScript values independently. Rendering starts once both sides are set:
+
+```js
+viewer.left = { name: "foo" };
+viewer.right = { name: "bar" };
+
+console.log(viewer.left, viewer.right);
+```
+
+### HTML Attributes (Alternative)
+
+Use only for small, static, inline JSON. Each value is parsed with `JSON.parse()`, so invalid JSON throws:
 
 ```html
 <json-diff-viewer
@@ -62,33 +88,32 @@ Static JSON can be passed as attributes. Values must be valid JSON strings:
 ></json-diff-viewer>
 ```
 
-- `JSON.parse` parses attribute values. Invalid JSON throws at parse time.
-- Prefer `setData()` or property setters for dynamic or object data
+Prefer `setData()` or properties for objects already available in JavaScript.
 
-### Properties
+### Class Export
 
-Set `left` and `right` as JavaScript values. Set both before the viewer draws a diff:
+The registered class is exported only when a class reference is needed for testing or extension:
 
 ```js
-viewer.left = { name: "foo" };
-viewer.right = { name: "bar" };
-
-viewer.left;  // read current left value
-viewer.right; // read current right value
+import { JsonDiffViewer } from "json-diff-viewer-component";
 ```
 
 ### Built-in Controls
 
-The component toolbar includes:
+No setup is required. The component toolbar includes:
 
 - **Show only changed**: filter toggle (default: **on**); hides unchanged nodes
 - **Collapse all** / **Expand all**: bulk expand/collapse
 - **Node toggles**: click any object/array line to expand/collapse (synced across both panels)
 
-<details>
-<summary>Framework Examples</summary>
+### Framework Usage
 
-### React
+The component remains the same custom element and uses `setData()` for reactive values.
+
+<details>
+<summary>React and Vue examples</summary>
+
+#### React
 
 ```jsx
 import { useEffect, useRef } from "react";
@@ -107,7 +132,7 @@ function DiffViewer({ left, right }) {
 }
 ```
 
-### Vue
+#### Vue
 
 ```vue
 <template>
@@ -115,25 +140,15 @@ function DiffViewer({ left, right }) {
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watchEffect } from "vue";
 import "json-diff-viewer-component";
 
-const props = defineProps({
-  left: Object,
-  right: Object,
-});
-
+const props = defineProps(["left", "right"]);
 const viewerRef = ref(null);
 
-watch(
-  () => [props.left, props.right],
-  () => {
-    if (viewerRef.value) {
-      viewerRef.value.setData(props.left, props.right);
-    }
-  },
-  { immediate: true },
-);
+watchEffect(() => {
+  viewerRef.value?.setData(props.left, props.right);
+});
 </script>
 ```
 
@@ -141,17 +156,19 @@ watch(
 
 ## Diff Types
 
-| Type     | Color  | Description              |
-| -------- | ------ | ------------------------ |
-| Added    | Green  | Key exists only in right |
-| Removed  | Red    | Key exists only in left  |
-| Modified | Yellow | Value changed            |
+| Type | Default | Description |
+| --- | --- | --- |
+| Added | Green | Key exists only on the right |
+| Removed | Red | Key exists only on the left |
+| Modified | Yellow | Values differ, or a container has changed descendants |
 
 ## Styling
 
-Override CSS custom properties (design tokens) on `json-diff-viewer`. Tokens live on `:host`; you set them from outside the shadow DOM.
+The component is fully usable without style configuration. Override CSS custom properties on `json-diff-viewer`. They inherit through the host into its shadow DOM. State foreground tokens also drive their derived backgrounds unless those backgrounds are overridden separately.
 
 ### Design Tokens
+
+Tokens inherit through the host. Override only the values your theme needs.
 
 ```css
 json-diff-viewer {
@@ -171,8 +188,18 @@ json-diff-viewer {
   --txt: #fafafa; /* Primary text */
   --dim: #a1a1aa; /* Dimmed/secondary text */
 
-  /* Controls */
-  --slider: var(--bdr); /* Slider toggle active color */
+  /* State backgrounds */
+  --add-bg: color-mix(in srgb, var(--add) 15%, transparent);
+  --rem-bg: color-mix(in srgb, var(--rem) 15%, transparent);
+  --mod-bg: color-mix(in srgb, var(--mod) 15%, transparent);
+
+  /* Controls and interaction */
+  --hover: rgb(0 0 0 / 3%); /* Diff row hover */
+  --control-bg: var(--bg2); /* Action button background */
+  --control-hover: rgb(0 0 0 / 5%); /* Action button hover */
+  --control-bdr: var(--bdr); /* Action button border */
+  --slider: var(--bdr); /* Slider active track */
+  --slider-thumb: var(--br); /* Slider thumb */
 
   /* Syntax highlighting */
   --key: #38bdf8; /* Object keys */
@@ -206,6 +233,43 @@ json-diff-viewer {
 }
 ```
 
+### Shadow Parts
+
+Use `::part()` for structural overrides that are not shared design tokens:
+
+| Parts | Elements |
+| --- | --- |
+| `toolbar`, `legend`, `legend-item`, `legend-added`, `legend-removed`, `legend-modified` | Summary and state legend |
+| `actions`, `filter`, `filter-track`, `action-button`, `collapse-button`, `expand-button` | Viewer controls |
+| `content`, `panel`, `panel-left`, `panel-right` | Diff layout and panels |
+| `node`, `node-added`, `node-removed`, `node-modified`, `line` | Diff nodes and rows |
+| `toggle`, `marker`, `marker-added`, `marker-removed`, `marker-modified` | Node controls and state markers |
+| `key`, `separator`, `value`, `value-string`, `value-number`, `value-boolean`, `value-null` | JSON content |
+| `bracket`, `preview`, `empty` | Supporting content and empty state |
+
+Elements can expose multiple parts, so generic and specific selectors compose:
+
+```css
+json-diff-viewer {
+  --add: lime;
+  --add-bg: color-mix(in srgb, lime 20%, transparent);
+}
+
+json-diff-viewer::part(toolbar) {
+  border-block-end-width: 4px;
+}
+
+json-diff-viewer::part(node-added) {
+  border-inline-start: 3px solid var(--add);
+}
+
+json-diff-viewer::part(collapse-button) {
+  border-radius: 999px;
+}
+```
+
+Parts are the supported structural API. Internal classes and other shadow elements remain private. `::part()` cannot select descendants, so target each listed part directly. Changing layout, padding, or typography on `node` and `line` can desynchronize corresponding rows between panels.
+
 ### Sizing
 
 Set a height to get scrolling. Without one, the viewer grows to fit all content. Default border-radius is `12px`.
@@ -237,6 +301,7 @@ json-diff-viewer {
 ```bash
 npm run dev      # start dev server
 npm run build    # build for production
+npm run preview  # preview the production build
 ```
 
 ## License
